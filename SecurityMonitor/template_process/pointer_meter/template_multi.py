@@ -19,7 +19,7 @@ def get_match(template, method, img, width, height):
     res = cv2.matchTemplate(img, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     # 设置匹配的阈值，可以根据实际情况调整
-    threshold = 0.4
+    threshold = 0.55
     # cv2.imwrite('../../img_test_corrected/output.png', 255 * res)
     # 使用np.where找到匹配结果大于阈值的位置
     locations = np.where(res >= threshold)
@@ -61,7 +61,7 @@ def get_match(template, method, img, width, height):
 def testFun():
     # tmpImgName = '../template/template.png'
     # destImgName = '../img_test/dest.png'
-    tmpImgName = '../../template_img/light_meter/template_light.png'
+    tmpImgName = '../../template_img/switch/switch_horizontal.png'
     destImgName = '../../img_test/test_light.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
@@ -301,14 +301,46 @@ def degree2num(corrected_img_path):
     return num
 
 
+def detect_light(image):
+    # 将图像转换为HSV颜色空间
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # 红色的HSV范围
+    lower_red = np.array([0, 100, 180])
+    upper_red = np.array([20, 255, 255])
+    red_mask = cv2.inRange(hsv_image, lower_red, upper_red)
+
+    # 绿色的HSV范围
+    lower_green = np.array([40, 100, 180])
+    upper_green = np.array([70, 255, 255])
+    green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
+
+    # 计算红色和绿色区域的像素数量
+    red_pixels = cv2.countNonZero(red_mask)
+    green_pixels = cv2.countNonZero(green_mask)
+
+    # 判断哪个灯点亮
+    if red_pixels > green_pixels:
+        return "红色灯点亮"
+    elif green_pixels > red_pixels:
+        return "绿色灯点亮"
+    else:
+        return "没有灯点亮"
+
+
 if __name__ == "__main__":
     # corrected_img_path = "../img_test_corrected/test1.png"
     # degree = degree2num(corrected_img_path)
     # print(degree)
     # preProcessImg()
-    testFun()
+    # testFun()
     # queryImagePath = "../../img_test/111.png"  # the image to be corrected
     # templateImgDir = "../../template_img/pointer_meter/"  # the tamplate dir
     # outImg = "../../img_test_corrected/"
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
+
+    # 读取输入图片
+    image = cv2.imread("../../template_img/light_meter/template_light.png")
+    # 进行灯光检测
+    result = detect_light(image)
     print('------\n')
