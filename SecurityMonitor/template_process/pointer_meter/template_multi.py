@@ -17,6 +17,27 @@ from PIL import Image
 
 def get_match(template, method, img, width, height):
     res = cv2.matchTemplate(img, template, method)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+    # 设置匹配的阈值，可以根据实际情况调整
+    threshold = 0.4
+    # cv2.imwrite('../../img_test_corrected/output.png', 255 * res)
+    # 使用np.where找到匹配结果大于阈值的位置
+    locations = np.where(res >= threshold)
+    # locations = list(zip(*locations[::-1]))
+    # 循环遍历每个匹配结果的位置
+    i = 0
+    for (x, y) in zip(*locations[::-1]):
+        # 在目标图片上绘制矩形框标记匹配区域
+        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
+        cv2.rectangle(img, (x, y), (x + width, y + height), (0, 255, 0), 2)
+        i += 1
+
+    # 显示标记了匹配区域的目标图片
+    cv2.imshow('Matched Objects', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
 
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     top_left = max_loc
@@ -35,11 +56,13 @@ def get_match(template, method, img, width, height):
     # c_x, c_y = ((np.array(top_left) + np.array(bottom_right)) / 2).astype(np.int)
     # print(c_x, c_y)
     return max_val, top_left, bottom_right
+
+
 def testFun():
     # tmpImgName = '../template/template.png'
     # destImgName = '../img_test/dest.png'
-    tmpImgName = './img_new/img00.png'
-    destImgName = './img_new/img15.png'
+    tmpImgName = '../../template_img/light_meter/template_light.png'
+    destImgName = '../../img_test/test_light.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
     tmpHeight = templateImg.shape[0]
@@ -51,7 +74,7 @@ def testFun():
     # cv2.waitKey(0)
 
     # 模版检测--------------------------
-    maxval,t_left, b_right = get_match(templateGray, cv2.TM_CCORR, destGray, tmpWidth, tmpHeight)
+    maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
     # cv2.rectangle(destGray, t_left, b_right, 255, 2)
     # cv2.imshow('result111', destGray)
     # cv2.waitKey(0)
@@ -283,7 +306,7 @@ if __name__ == "__main__":
     # degree = degree2num(corrected_img_path)
     # print(degree)
     # preProcessImg()
-    # testFun()
+    testFun()
     # queryImagePath = "../../img_test/111.png"  # the image to be corrected
     # templateImgDir = "../../template_img/pointer_meter/"  # the tamplate dir
     # outImg = "../../img_test_corrected/"
