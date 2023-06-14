@@ -38,8 +38,8 @@ def get_match(template, method, img, width, height):
 def testFun():
     # tmpImgName = '../template/template.png'
     # destImgName = '../img_test/dest.png'
-    tmpImgName = '../img_new/img00.png'
-    destImgName = '../img_new/img15.png'
+    tmpImgName = './img_new/img00.png'
+    destImgName = './img_new/img15.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
     tmpWidth = templateImg.shape[0]

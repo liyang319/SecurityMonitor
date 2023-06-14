@@ -32,7 +32,7 @@ if __name__ == "__main__":
     outImg = "./img_test_corrected/"
     matchedTemplateClass = pointer_meter_match.CorrectImage(queryImagePath, templateImgDir, outImg)
     templateclass = find_templateclass_using_name(MonitorType.POINTER_METER, matchedTemplateClass)
-    templateclass.get_match('', '', '', '', '')
+    templateclass.testFun()
     print('------\n')
 
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
