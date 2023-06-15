@@ -19,7 +19,7 @@ def get_match(template, method, img, width, height):
     res = cv2.matchTemplate(img, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     # 设置匹配的阈值，可以根据实际情况调整
-    threshold = 0.55
+    threshold = 0.4
     # cv2.imwrite('../../img_test_corrected/output.png', 255 * res)
     # 使用np.where找到匹配结果大于阈值的位置
     locations = np.where(res >= threshold)
@@ -33,6 +33,9 @@ def get_match(template, method, img, width, height):
         i += 1
 
     # 显示标记了匹配区域的目标图片
+
+    detectRect(img)
+
     cv2.imshow('Matched Objects', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -61,7 +64,7 @@ def get_match(template, method, img, width, height):
 def testFun():
     # tmpImgName = '../template/template.png'
     # destImgName = '../img_test/dest.png'
-    tmpImgName = '../../template_img/switch/switch_horizontal.png'
+    tmpImgName = '../../template_img/light_meter/template_light.png'
     destImgName = '../../img_test/test_light.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
@@ -301,31 +304,46 @@ def degree2num(corrected_img_path):
     return num
 
 
-# def detect_light(image):
-#     # 将图像转换为HSV颜色空间
-#     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-#
-#     # 红色的HSV范围
-#     lower_red = np.array([0, 100, 180])
-#     upper_red = np.array([20, 255, 255])
-#     red_mask = cv2.inRange(hsv_image, lower_red, upper_red)
-#
-#     # 绿色的HSV范围
-#     lower_green = np.array([40, 100, 180])
-#     upper_green = np.array([70, 255, 255])
-#     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
-#
-#     # 计算红色和绿色区域的像素数量
-#     red_pixels = cv2.countNonZero(red_mask)
-#     green_pixels = cv2.countNonZero(green_mask)
-#
-#     # 判断哪个灯点亮
-#     if red_pixels > green_pixels:
-#         return "红色灯点亮"
-#     elif green_pixels > red_pixels:
-#         return "绿色灯点亮"
-#     else:
-#         return "没有灯点亮"
+def detectRect(image):
+    # 读取图片
+    # image = cv2.imread('image.jpg')
+
+    # 将图片转换为HSV颜色空间
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # 定义绿色的HSV范围
+    lower_green = (60, 40, 40)
+    upper_green = (70, 255, 255)
+
+    # 根据HSV范围创建掩膜
+    mask = cv2.inRange(hsv, lower_green, upper_green)
+
+    # 在原始图像上应用掩膜
+    result = cv2.bitwise_and(image, image, mask=mask)
+
+    # 将结果转换为灰度图像
+    gray = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+
+    # 使用边缘检测算法检测矩形轮廓
+    contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # 遍历所有轮廓
+    print('----------\n')
+    i = 0
+    for contour in contours:
+        # 计算轮廓的边界框
+        x, y, w, h = cv2.boundingRect(contour)
+
+        # 绘制矩形边界框
+        cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        cv2.imshow('Result', image)
+        cv2.waitKey(0)
+        i += 1
+
+    # 显示结果图像
+
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
@@ -340,7 +358,8 @@ if __name__ == "__main__":
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
 
     # # 读取输入图片
-    # image = cv2.imread("../../template_img/light_meter/template_light.png")
+    # mimage = cv2.imread("../../template_img/light_meter/template_light.png")
+    # detectRect(mimage)
     # # 进行灯光检测
     # result = detect_light(image)
     print('------\n')
