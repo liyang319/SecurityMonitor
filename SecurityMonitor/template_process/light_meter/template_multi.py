@@ -82,71 +82,71 @@ def testFun():
     # cv2.imshow('result111', destGray)
     # cv2.waitKey(0)
 
+    # 边界检测--------------------------
 
+    # 高斯除噪
+    kernel = np.ones((6, 6), np.float32) / 36
+    gray_cut_filter2D = cv2.filter2D(destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth], -1, kernel)
 
+    # cv2.imshow('test', gray_cut_filter2D)
+    # cv2.waitKey(0)
 
-    # # 边界检测--------------------------
-    #
-    # # 高斯除噪
-    # kernel = np.ones((6, 6), np.float32) / 36
-    # gray_cut_filter2D = cv2.filter2D(destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth], -1, kernel)
-    #
-    # # cv2.imshow('test', gray_cut_filter2D)
-    # # cv2.waitKey(0)
-    #
-    # # 灰度图 二值化
-    # # gray_img = cv2.cvtColor(gray_cut_filter2D, cv2.COLOR_BGR2GRAY)
-    # # ret, thresh1 = cv2.threshold(gray_cut_filter2D, 180, 255, cv2.THRESH_BINARY)
-    # preDstImg = destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth]
-    # ret, thresh1 = cv2.threshold(preDstImg, 88, 255, cv2.THRESH_BINARY)
-    #
-    # # cv2.imshow('test', thresh1)
-    # # cv2.waitKey(0)
-    #
-    # # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
-    # tm = thresh1.copy()
-    # test_main = tm[100:1000, 100:1000]
-    # # test_main = tm[50:605, 50:606]
-    # # cv2.imshow('test', test_main)
-    # # cv2.waitKey(0)
-    #
-    # # 边缘化检测
-    # edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
-    #
-    # # cv2.imshow('test', edges)
-    # # cv2.waitKey(0)
-    #
-    # # 霍夫直线
-    # lines = cv2.HoughLines(edges, 1, np.pi / 180, 60)
-    # if lines is None:
-    #     print('')
-    # result = edges.copy()
-    #
-    # for line in lines[0]:
-    #     rho = line[0]  # 第一个元素是距离rho
-    #     theta = line[1]  # 第二个元素是角度theta
-    #     print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
-    #     lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
-    #     cv2.putText(destGray, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    #     if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
-    #         # 该直线与第一行的交点
-    #         pt1 = (int(rho / np.cos(theta)), 0)
-    #         # 该直线与最后一行的焦点
-    #         pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
-    #         # 绘制一条白线
-    #         cv2.line(result, pt1, pt2, 255, 1)
-    #         # print('theat >180 theta<90')
-    #
-    #     else:  # 水平直线
-    #         # 该直线与第一列的交点
-    #         pt1 = (0, int(rho / np.sin(theta)))
-    #         # 该直线与最后一列的交点
-    #         pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
-    #         # 绘制一条直线
-    #         cv2.line(result, pt1, pt2, 255, 1)
-    #         # print('theat <180 theta > 90')
+    # 灰度图 二值化
+    # gray_img = cv2.cvtColor(gray_cut_filter2D, cv2.COLOR_BGR2GRAY)
+    # ret, thresh1 = cv2.threshold(gray_cut_filter2D, 180, 255, cv2.THRESH_BINARY)
+    preDstImg = destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth]
+    ret, thresh1 = cv2.threshold(preDstImg, 88, 255, cv2.THRESH_BINARY)
 
+    # cv2.imshow('test', thresh1)
+    # cv2.waitKey(0)
 
+    # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
+    tm = thresh1.copy()
+    test_main = tm[100:1000, 100:1000]
+    # test_main = tm[50:605, 50:606]
+    # cv2.imshow('test', test_main)
+    # cv2.waitKey(0)
+
+    # 边缘化检测
+    edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
+
+    # cv2.imshow('test', edges)
+    # cv2.waitKey(0)
+
+    # 霍夫直线
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, 60)
+    if lines is None:
+        print('')
+    result = edges.copy()
+
+    for line in lines[0]:
+        rho = line[0]  # 第一个元素是距离rho
+        theta = line[1]  # 第二个元素是角度theta
+        print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
+        lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
+        cv2.putText(destGray, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
+            # 该直线与第一行的交点
+            pt1 = (int(rho / np.cos(theta)), 0)
+            # 该直线与最后一行的焦点
+            pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
+            # 绘制一条白线
+            cv2.line(result, pt1, pt2, 255, 1)
+            # print('theat >180 theta<90')
+
+        else:  # 水平直线
+            # 该直线与第一列的交点
+            pt1 = (0, int(rho / np.sin(theta)))
+            # 该直线与最后一列的交点
+            pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
+            # 绘制一条直线
+            cv2.line(result, pt1, pt2, 255, 1)
+            # print('theat <180 theta > 90')
+
+    cv2.imshow('result', result)
+    cv2.imshow('rectangle', destGray)
+    cv2.waitKey(0)
+    print('---------')
 
 def preProcessImg():
     inputImg = '../img_test/testc.png'
@@ -351,15 +351,14 @@ def detectRect(image, width, height):
         # 计算轮廓的边界框
         x, y, w, h = cv2.boundingRect(area)
         print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        # 识别区域的图片数据
-        cv2.imshow('Result', image[y:y+h, x:x+w])
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.imshow('Result', image)
         cv2.waitKey(0)
         j += 1
 
     # 显示结果图像
-    return realAreas
-    # cv2.destroyAllWindows()
+
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
