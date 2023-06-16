@@ -1,0 +1,31 @@
+{
+    "PointerMeter_1": {
+        "deviceType": "pointer",
+        "minVal": "0",
+        "maxVal": "100",
+        "minSlope": "0",
+        "maxSlope": "180",
+        "unit": "A",
+        "numPointerMeter": "1"
+    },
+    "ComMeter_1": {
+        "deviceType": "pointer_light",
+        "minVal": "0",
+        "maxVal": "100",
+        "minSlope": "0",
+        "maxSlope": "180",
+        "unit": "A",
+        "numPointerMeter": "1",
+        "lightType": "2"
+    },
+    "ComMeter_2": {
+        "deviceType": "pointer_light",
+        "minVal": "0",
+        "maxVal": "100",
+        "minSlope": "0",
+        "maxSlope": "180",
+        "unit": "A",
+        "numPointerMeter": "1",
+        "lightType": "3"
+    }
+}

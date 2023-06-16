@@ -4,11 +4,20 @@ import importlib
 from enum import Enum
 import cv2
 import template_process.utils.utils_qr as qr_utils
+import json
+
+meterTypeConfigFileName = './config/meter_type.json'
+monitorConfigFileName = './config/monitor_config.json'
+inputFileName = './img_test/qr_test.png'
+g_QrCodeArray = []
+finalResult = ''
+g_MeterTypeObj = []
+g_DeviceConfigObj = []
+
 
 class MonitorType(Enum):
     POINTER_METER = 'pointer_meter'
     LIGHT_METER = 'light_meter'
-
 
 
 def find_templateclass_using_name(class_type, class_name):
@@ -27,16 +36,56 @@ def find_templateclass_using_name(class_type, class_name):
     return templateclass
 
 
+
+def loadConfiguration():
+    print('----loadConfiguration---')
+    # 仪表类型配置
+    with open(meterTypeConfigFileName, 'r') as file:
+        # 读取文件内容
+        dev_json_str = file.read()
+        # 解析JSON字符串 声明全局变量
+        global g_MeterTypeObj
+        g_MeterTypeObj = json.loads(dev_json_str)
+        print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
+    # 设备预警配置
+    with open(monitorConfigFileName, 'r') as file:
+        # 读取文件内容
+        monitor_json_str = file.read()
+        # 解析JSON字符串
+        global g_DeviceConfigObj
+        g_DeviceConfigObj = json.loads(monitor_json_str)
+
+def detectQrCode(image):
+    print('----detectQrCode---')
+    qrArr = qr_utils.qr_decode(image)
+    return qrArr
+
+
+def getResult():
+    print('----detectQrCode---')
+
+
 if __name__ == "__main__":
+    loadConfiguration()
+    # print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
+
+
+    image = cv2.imread(inputFileName)
+    g_QrCodeArray = detectQrCode(image)
+    # print(g_QrCodeArray[0].w)
+    print(g_DeviceConfigObj[g_QrCodeArray[0].val])
+
+    print('------\n')
+
+
+
     # queryImagePath = "./img_new/img00.png"  # the image to be corrected
     # templateImgDir = "./template_img/pointer_meter/"  # the tamplate dir
     # outImg = "./img_test_corrected/"
     # matchedTemplateClass = pointer_meter_match.CorrectImage(queryImagePath, templateImgDir, outImg)
     # templateclass = find_templateclass_using_name(MonitorType.POINTER_METER, matchedTemplateClass)
     # templateclass.testFun()
-    image = cv2.imread('./img_test/qr_test.png')
-    qrArr = qr_utils.qr_decode(image)
-    print('------\n')
+
 
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
     # print(matchedTemplateClass)

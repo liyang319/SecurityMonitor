@@ -1,0 +1,18 @@
+{
+    "12345678": {
+        "meterType": "PointerMeter_1",
+        "result": {
+            "meter1_val": "30",
+            "meter2_val": "30",
+            "light": "1"
+        }
+    },
+    "1111111112222": {
+        "meterType": "PointerMeter_1",
+        "result": {
+            "meter1_val": "30",
+            "meter2_val": "30",
+            "light": "1"
+        }
+    }
+}
