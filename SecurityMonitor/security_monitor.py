@@ -2,7 +2,8 @@ import argparse
 import pointer_meter_match
 import importlib
 from enum import Enum
-
+import cv2
+import template_process.utils.utils_qr as qr_utils
 
 class MonitorType(Enum):
     POINTER_METER = 'pointer_meter'
@@ -27,12 +28,14 @@ def find_templateclass_using_name(class_type, class_name):
 
 
 if __name__ == "__main__":
-    queryImagePath = "./img_new/img00.png"  # the image to be corrected
-    templateImgDir = "./template_img/pointer_meter/"  # the tamplate dir
-    outImg = "./img_test_corrected/"
-    matchedTemplateClass = pointer_meter_match.CorrectImage(queryImagePath, templateImgDir, outImg)
-    templateclass = find_templateclass_using_name(MonitorType.POINTER_METER, matchedTemplateClass)
-    templateclass.testFun()
+    # queryImagePath = "./img_new/img00.png"  # the image to be corrected
+    # templateImgDir = "./template_img/pointer_meter/"  # the tamplate dir
+    # outImg = "./img_test_corrected/"
+    # matchedTemplateClass = pointer_meter_match.CorrectImage(queryImagePath, templateImgDir, outImg)
+    # templateclass = find_templateclass_using_name(MonitorType.POINTER_METER, matchedTemplateClass)
+    # templateclass.testFun()
+    image = cv2.imread('./img_test/qr_test.png')
+    qrArr = qr_utils.qr_decode(image)
     print('------\n')
 
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)

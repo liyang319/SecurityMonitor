@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 from PIL import Image
-
+# from template_process.utils.utils_qr import qr_decode, qr_encode
+import template_process.utils.utils_qr as qr_utils
 
 # def init(self):
 #     # 获取模板样本
@@ -367,12 +368,15 @@ if __name__ == "__main__":
     # degree = degree2num(corrected_img_path)
     # print(degree)
     # preProcessImg()
-    testFun()
+    # testFun()
+
+
     # queryImagePath = "../../img_test/111.png"  # the image to be corrected
     # templateImgDir = "../../template_img/pointer_meter/"  # the tamplate dir
     # outImg = "../../img_test_corrected/"
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
-
+    image = cv2.imread('../../img_test/qr_test.png')
+    qrArr = qr_utils.qr_decode(image)
     # # 读取输入图片
     # mimage = cv2.imread("../../template_img/light_meter/template_light.png")
     # detectRect(mimage)
