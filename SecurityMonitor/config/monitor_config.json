@@ -4,6 +4,7 @@
         "result": {
             "meter1_val": "30",
             "meter2_val": "30",
+            "meter3_val": "30",
             "light": "1"
         }
     },
@@ -12,6 +13,7 @@
         "result": {
             "meter1_val": "30",
             "meter2_val": "30",
+            "meter3_val": "30",
             "light": "1"
         }
     }

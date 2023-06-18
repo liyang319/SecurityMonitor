@@ -14,6 +14,9 @@ finalResult = ''
 g_MeterTypeObj = []
 g_DeviceConfigObj = []
 
+g_ExpResult = ''
+g_ActResult = ''
+g_fullResult = ''
 
 class MonitorType(Enum):
     POINTER_METER = 'pointer_meter'
@@ -61,20 +64,32 @@ def detectQrCode(image):
     return qrArr
 
 
-def getResult():
+def getExpResult():
+    retVal = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
+    return retVal
+
+
+def getActResult():
     print('----detectQrCode---')
+    retVal = ''
+    return retVal
+
+
+def formatResult():
+    retVal = ''
+    return retVal
 
 
 if __name__ == "__main__":
     loadConfiguration()
-    # print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
-
-
     image = cv2.imread(inputFileName)
     g_QrCodeArray = detectQrCode(image)
-    # print(g_QrCodeArray[0].w)
-    print(g_DeviceConfigObj[g_QrCodeArray[0].val])
-
+    print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
+    # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
+    g_ExpResult = getExpResult()
+    g_ActResult = getActResult()
+    g_fullResult = formatResult()
+    print(g_fullResult)
     print('------\n')
 
 
