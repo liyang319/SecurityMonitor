@@ -117,6 +117,7 @@ def testFun():
             cv2.line(result, pt1, pt2, 255, 1)
             # print('theat <180 theta > 90')
 
+    cv2.imwrite('../../img_test_corrected/test_sum.png', result)
     cv2.imshow('result', result)
     cv2.imshow('rectangle', destGray)
     cv2.waitKey(0)
@@ -271,19 +272,20 @@ def degree2num(corrected_img_path):
     # show the result
     # cv2.imshow("edges", edges)
     # cv2.imshow("img", gray)
-    # cv2.imshow("edges_resized", edges_img_resized_array)
-    # cv2.waitKey(0)
+    cv2.imshow("edges_resized", edges_img_resized_array)
+    cv2.waitKey(0)
     print(num)
 
     return num
 
 
 if __name__ == "__main__":
-    # corrected_img_path = "../img_test_corrected/test1.png"
-    # degree = degree2num(corrected_img_path)
+    corrected_img_path = "../../img_test_corrected/test_sum.png"
+    degree = degree2num(corrected_img_path)
     # print(degree)
     # preProcessImg()
-    testFun()
+    # testFun()
+
     # queryImagePath = "../../img_test/111.png"  # the image to be corrected
     # templateImgDir = "../../template_img/pointer_meter/"  # the tamplate dir
     # outImg = "../../img_test_corrected/"

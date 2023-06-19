@@ -4,6 +4,7 @@ import importlib
 from enum import Enum
 import cv2
 import template_process.utils.utils_qr as qr_utils
+import template_process.pointer_meter.template_sub_ammeter as sub_ammeter
 import json
 
 meterTypeConfigFileName = './config/meter_type.json'
@@ -89,6 +90,9 @@ if __name__ == "__main__":
     g_ExpResult = getExpResult()
     g_ActResult = getActResult()
     g_fullResult = formatResult()
+
+    ret = sub_ammeter.GetMeterValue('./img_new/img04.png', '')
+
     print(g_fullResult)
     print('------\n')
 
