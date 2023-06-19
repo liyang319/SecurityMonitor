@@ -1,21 +1,13 @@
 import cv2
 import numpy as np
 from PIL import Image
-# from template_process.utils.utils_qr import qr_decode, qr_encode
-import template_process.utils.utils_qr as qr_utils
-
-
-#     methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF',
-#                'cv2.TM_SQDIFF_NORMED']
 
 
 def get_match(template, method, img, width, height):
-
     res = cv2.matchTemplate(img, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     # 设置匹配的阈值，可以根据实际情况调整
     threshold = 0.35
-    # cv2.imwrite('../../img_test_corrected/output.png', 255 * res)
     # 使用np.where找到匹配结果大于阈值的位置
     locations = np.where(res >= threshold)
     # locations = list(zip(*locations[::-1]))
@@ -28,9 +20,7 @@ def get_match(template, method, img, width, height):
         i += 1
 
     # 显示标记了匹配区域的目标图片
-
     # detectRect(img, width, height)
-
     cv2.imshow('Matched Objects', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
@@ -46,20 +36,56 @@ def get_match(template, method, img, width, height):
     print("max_loc", max_loc)
     print("----------------------------")
     bottom_right = (top_left[0] + width, top_left[1] + height)
-    # cv2.rectangle(img, top_left, bottom_right, 255, 2)
-    # cv2.circle(img, top_left, 40, (0, 0, 0), -1)  # 画圆形
-    # cv2.circle(img, bottom_right, 40, (0, 0, 0), -1)  # 画圆形
-    # cv2.imshow('result111', img)
-    # cv2.waitKey(0)
-    # c_x, c_y = ((np.array(top_left) + np.array(bottom_right)) / 2).astype(np.int)
-    # print(c_x, c_y)
     return max_val, top_left, bottom_right
 
 
+def getMeterResult(dstImg, width, height, wOffset, hOffset):
+    retVal = ''
+    ret, thresh1 = cv2.threshold(dstImg, 88, 255, cv2.THRESH_BINARY)
+    # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
+    tm = thresh1.copy()
+    test_main = tm[hOffset:height, wOffset:width]
+
+    # 边缘化检测
+    edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
+
+    # 霍夫直线
+    lines = cv2.HoughLines(edges, 1, np.pi / 180, 60)
+    if lines is None:
+        print('')
+    result = edges.copy()
+
+    for line in lines[0]:
+        rho = line[0]  # 第一个元素是距离rho
+        theta = line[1]  # 第二个元素是角度theta
+        print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
+        lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
+        # cv2.putText(dstImg, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
+            # 该直线与第一行的交点
+            pt1 = (int(rho / np.cos(theta)), 0)
+            # 该直线与最后一行的焦点
+            pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
+            # 绘制一条白线
+            cv2.line(result, pt1, pt2, 255, 1)
+            # print('theat >180 theta<90')
+
+        else:  # 水平直线
+            # 该直线与第一列的交点
+            pt1 = (0, int(rho / np.sin(theta)))
+            # 该直线与最后一列的交点
+            pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
+            # 绘制一条直线
+            cv2.line(result, pt1, pt2, 255, 1)
+            # print('theat <180 theta > 90')
+    cv2.imshow('result111', result)
+    cv2.waitKey(0)
+    return retVal
+
+
 def testFun():
-    # tmpImgName = '../template/template.png'
-    # destImgName = '../img_test/dest.png'
-    tmpImgName = '../../template_img/pointer_meter/template_sum_ammeter.png'
+    tmpImgName = '../../img_test/test_sumammeter.png'
+    # tmpImgName = '../../template_img/pointer_meter/template_sum_ammeter.png'
     destImgName = '../../img_test/test_sum_ammeter1.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
@@ -67,81 +93,13 @@ def testFun():
     tmpWidth = templateImg.shape[1]
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
-    # cv2.imshow('imageGray', destGray)
-    # cv2.imshow('templateGray', templateGray)
-    # cv2.waitKey(0)
 
     # 模版检测--------------------------
-    maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
+    # maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
 
+    # 边界检测--------------------------
+    getMeterResult(templateGray, tmpWidth, tmpHeight, 10, 10)
 
-    # cv2.rectangle(destGray, t_left, b_right, 255, 2)
-    # cv2.imshow('result111', destGray)
-    # cv2.waitKey(0)
-
-
-
-
-    # # 边界检测--------------------------
-    #
-    # # 高斯除噪
-    # kernel = np.ones((6, 6), np.float32) / 36
-    # gray_cut_filter2D = cv2.filter2D(destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth], -1, kernel)
-    #
-    # # cv2.imshow('test', gray_cut_filter2D)
-    # # cv2.waitKey(0)
-    #
-    # # 灰度图 二值化
-    # # gray_img = cv2.cvtColor(gray_cut_filter2D, cv2.COLOR_BGR2GRAY)
-    # # ret, thresh1 = cv2.threshold(gray_cut_filter2D, 180, 255, cv2.THRESH_BINARY)
-    # preDstImg = destGray[t_left[1]:t_left[1] + tmpHeight, t_left[0]:t_left[0] + tmpWidth]
-    # ret, thresh1 = cv2.threshold(preDstImg, 88, 255, cv2.THRESH_BINARY)
-    #
-    # # cv2.imshow('test', thresh1)
-    # # cv2.waitKey(0)
-    #
-    # # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
-    # tm = thresh1.copy()
-    # test_main = tm[100:1000, 100:1000]
-    # # test_main = tm[50:605, 50:606]
-    # # cv2.imshow('test', test_main)
-    # # cv2.waitKey(0)
-    #
-    # # 边缘化检测
-    # edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
-    #
-    # # cv2.imshow('test', edges)
-    # # cv2.waitKey(0)
-    #
-    # # 霍夫直线
-    # lines = cv2.HoughLines(edges, 1, np.pi / 180, 60)
-    # if lines is None:
-    #     print('')
-    # result = edges.copy()
-    #
-    # for line in lines[0]:
-    #     rho = line[0]  # 第一个元素是距离rho
-    #     theta = line[1]  # 第二个元素是角度theta
-    #     print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
-    #     lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
-    #     cv2.putText(destGray, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    #     if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
-    #         # 该直线与第一行的交点
-    #         pt1 = (int(rho / np.cos(theta)), 0)
-    #         # 该直线与最后一行的焦点
-    #         pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
-    #         # 绘制一条白线
-    #         cv2.line(result, pt1, pt2, 255, 1)
-    #         # print('theat >180 theta<90')
-    #
-    #     else:  # 水平直线
-    #         # 该直线与第一列的交点
-    #         pt1 = (0, int(rho / np.sin(theta)))
-    #         # 该直线与最后一列的交点
-    #         pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
-    #         # 绘制一条直线
-    #         cv2.line(result, pt1, pt2, 255, 1)
-    #         # print('theat <180 theta > 90')
 
 
 
@@ -154,17 +112,6 @@ def preProcessImg():
     gray = cv2.imread(inputImg, 0)
     # res = cv2.matchTemplate(gray, template, method)
     # min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-
-    # pp1 = (0,0)
-    # pp2 = (500, 500)
-    # cv2.line(template, pp1, pp2, (0,255, 0), cv2.LINE_AA)
-    # cv2.imshow('result111', template)
-    # cv2.waitKey(0)
-
-
-    # (startX, startY) = max_loc
-    # endX = startX + template.shape[1]
-    # endY = startY + template.shape[0]
 
     # 边缘化检测
     edges = cv2.Canny(template, 50, 150, apertureSize=3)
@@ -357,6 +304,7 @@ def detectRect(image, width, height):
 
 if __name__ == "__main__":
     testFun()
+    # preProcessImg()
     # # 读取输入图片
     # mimage = cv2.imread("../../template_img/light_meter/template_light.png")
     # detectRect(mimage)

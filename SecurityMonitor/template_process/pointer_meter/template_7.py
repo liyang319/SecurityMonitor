@@ -38,8 +38,8 @@ def get_match(template, method, img, width, height):
 def testFun():
     # tmpImgName = '../template/template.png'
     # destImgName = '../img_test/dest.png'
-    tmpImgName = './img_new/img00.png'
-    destImgName = './img_new/img15.png'
+    tmpImgName = '../../img_new/img00.png'
+    destImgName = '../../img_new/img15.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
     tmpHeight = templateImg.shape[0]
@@ -283,7 +283,7 @@ if __name__ == "__main__":
     # degree = degree2num(corrected_img_path)
     # print(degree)
     # preProcessImg()
-    # testFun()
+    testFun()
     # queryImagePath = "../../img_test/111.png"  # the image to be corrected
     # templateImgDir = "../../template_img/pointer_meter/"  # the tamplate dir
     # outImg = "../../img_test_corrected/"
