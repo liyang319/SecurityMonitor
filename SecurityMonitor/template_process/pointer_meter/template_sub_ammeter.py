@@ -40,14 +40,14 @@ def get_match(template, method, img, width, height):
 
 
 def getMeterResult(dstImg, width, height, wOffset, hOffset):
-    retVal = ''
+    retVal = 0
     ret, thresh1 = cv2.threshold(dstImg, 130, 255, cv2.THRESH_BINARY)
     # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
     tm = thresh1.copy()
     test_main = tm[hOffset:(height - hOffset), wOffset:(width - wOffset)]
 
     # 边缘化检测
-    edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
+    edges = cv2.Canny(test_main, 50, 255, apertureSize=3)
 
     # 霍夫直线
     lines = cv2.HoughLines(edges, 1, np.pi / 180, 60)
@@ -57,44 +57,54 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
     cv2.imshow('result111', result)
     cv2.waitKey(0)
 
-    for line in lines[0]:
-        rho = line[0]  # 第一个元素是距离rho
-        theta = line[1]  # 第二个元素是角度theta
-        print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
-        lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
-        # cv2.putText(dstImg, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
-            # 该直线与第一行的交点
-            pt1 = (int(rho / np.cos(theta)), 0)
-            # 该直线与最后一行的焦点
-            pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
-            # 绘制一条白线
-            cv2.line(result, pt1, pt2, 255, 1)
-            # print('theat >180 theta<90')
+    if lines is not None and lines.size != 0:
+        for line in lines[0]:
+            rho = line[0]  # 第一个元素是距离rho
+            theta = line[1]  # 第二个元素是角度theta
+            print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
+            lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
+            # cv2.putText(dstImg, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
+                # 该直线与第一行的交点
+                pt1 = (int(rho / np.cos(theta)), 0)
+                # 该直线与最后一行的焦点
+                pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
+                # 绘制一条白线
+                cv2.line(result, pt1, pt2, 255, 1)
+                # print('theat >180 theta<90')
 
-        else:  # 水平直线
-            # 该直线与第一列的交点
-            pt1 = (0, int(rho / np.sin(theta)))
-            # 该直线与最后一列的交点
-            pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
-            # 绘制一条直线
-            cv2.line(result, pt1, pt2, 255, 1)
-            # print('theat <180 theta > 90')
-
+            else:  # 水平直线
+                # 该直线与第一列的交点
+                pt1 = (0, int(rho / np.sin(theta)))
+                # 该直线与最后一列的交点
+                pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
+                # 绘制一条直线
+                cv2.line(result, pt1, pt2, 255, 1)
+                # print('theat <180 theta > 90')
+            # 计算表针读数
+            angle = get_angle(pt1[0], pt1[1], pt2[0], pt2[1])
+            print('angle === ' + str(angle))
+            retVal = caculateMeterVal(angle, 0, 2.0)
+            print(str(retVal))
+    else:
+        print('There is no pointer detected!!!')
     # cv2.imwrite('../../img_test_corrected/test_sum11.png', result)
     cv2.imshow('result111', result)
     cv2.waitKey(0)
-    angle = get_angle(pt1[0], pt1[1], pt2[0], pt2[1])
-    print('angle === ' + str(angle))
-    retVal = caculateMeterVal(angle, 0, 2.0)
-    print(str(retVal))
+
     return retVal
 
 
 def get_angle(x1, y1, x2, y2):
-    slope = (y2 - y1) / (x2 - x1)
-    angle = math.atan(slope)
-    return math.degrees(angle)
+    if x1 == x2:
+        if y2 > y1:
+            return 90
+        else:
+            return 270
+    else:
+        slope = (y2 - y1) / (x2 - x1)
+        angle = math.atan(slope)
+        return math.degrees(angle)
 
 
 def caculateMeterVal(angle, minVal, maxVal):
@@ -108,7 +118,7 @@ def GetMeterValue(dstImg, params):
     dstImgGray = cv2.cvtColor(dstImg, cv2.COLOR_BGR2GRAY)
     dstImgHeight = dstImg.shape[0]
     dstImgWidth = dstImg.shape[1]
-    retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 30, 30)
+    retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 40, 40)
     print('GetMeterValue = ' + str(retVal))
     return retVal
 
