@@ -39,9 +39,26 @@ def get_match(template, method, img, width, height):
     return max_val, top_left, bottom_right
 
 
+def enhance_contrast(image, alpha, beta):
+    # 线性变换的公式为：output = alpha * input + beta
+    # 将图像转换为浮点数类型
+    image = image.astype(float)
+    # 线性变换
+    enhanced_image = alpha * image + beta
+    # 限制像素值范围在0到255之间
+    enhanced_image = np.clip(enhanced_image, 0, 255)
+    # 转换为无符号整数类型
+    enhanced_image = enhanced_image.astype(np.uint8)
+    return enhanced_image
+
+
 def getMeterResult(dstImg, width, height, wOffset, hOffset):
     retVal = 0
-    ret, thresh1 = cv2.threshold(dstImg, 130, 255, cv2.THRESH_BINARY)
+    enhanced_image = enhance_contrast(dstImg, 0.8, 0)
+    cv2.imshow('enhance', enhanced_image)
+    cv2.waitKey(0)
+
+    ret, thresh1 = cv2.threshold(enhanced_image, 130, 255, cv2.THRESH_BINARY)
     # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
     tm = thresh1.copy()
     test_main = tm[hOffset:(height - hOffset), wOffset:(width - wOffset)]
