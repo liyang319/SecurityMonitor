@@ -41,10 +41,10 @@ def get_match(template, method, img, width, height):
 
 def getMeterResult(dstImg, width, height, wOffset, hOffset):
     retVal = ''
-    ret, thresh1 = cv2.threshold(dstImg, 88, 255, cv2.THRESH_BINARY)
+    ret, thresh1 = cv2.threshold(dstImg, 130, 255, cv2.THRESH_BINARY)
     # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
     tm = thresh1.copy()
-    test_main = tm[hOffset:height, wOffset:width]
+    test_main = tm[hOffset:(height - hOffset), wOffset:(width - wOffset)]
 
     # 边缘化检测
     edges = cv2.Canny(test_main, 50, 150, apertureSize=3)
@@ -54,6 +54,8 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
     if lines is None:
         print('')
     result = edges.copy()
+    cv2.imshow('result111', result)
+    cv2.waitKey(0)
 
     for line in lines[0]:
         rho = line[0]  # 第一个元素是距离rho
@@ -80,12 +82,12 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
             # print('theat <180 theta > 90')
 
     # cv2.imwrite('../../img_test_corrected/test_sum11.png', result)
+    cv2.imshow('result111', result)
+    cv2.waitKey(0)
     angle = get_angle(pt1[0], pt1[1], pt2[0], pt2[1])
     print('angle === ' + str(angle))
     retVal = caculateMeterVal(angle, 0, 2.0)
-    print(retVal)
-    # cv2.imshow('result111', result)
-    # cv2.waitKey(0)
+    print(str(retVal))
     return retVal
 
 
@@ -101,12 +103,13 @@ def caculateMeterVal(angle, minVal, maxVal):
     return retVal
 
 
-def GetMeterValue(dstImgName, params):
-    templateImg = cv2.imread(dstImgName)
-    templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
-    tmpHeight = templateImg.shape[0]
-    tmpWidth = templateImg.shape[1]
-    retVal = getMeterResult(templateGray, tmpWidth, tmpHeight, 10, 10)
+def GetMeterValue(dstImg, params):
+    # templateImg = cv2.imread(dstImgName)
+    dstImgGray = cv2.cvtColor(dstImg, cv2.COLOR_BGR2GRAY)
+    dstImgHeight = dstImg.shape[0]
+    dstImgWidth = dstImg.shape[1]
+    retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 30, 30)
+    print('GetMeterValue = ' + str(retVal))
     return retVal
 
 
@@ -239,7 +242,8 @@ def detectRect(image, width, height):
 
 
 if __name__ == "__main__":
-    GetMeterValue('../../img_new/img04.png', '')
+    dstImg = cv2.imread('../../img_new/sub_ammeter3.png')
+    GetMeterValue(dstImg, '')
     # corrected_img_path = "../../img_test_corrected/test_sum11.png"
     # degree = degree2num(corrected_img_path)
     # preProcessImg()
