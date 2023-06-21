@@ -4,16 +4,18 @@ import importlib
 from enum import Enum
 import cv2
 import template_process.utils.utils_qr as qr_utils
+import template_process.utils.deviceInfo_class as DeviceInfo
 import template_process.pointer_meter.template_sub_ammeter as sub_ammeter
 import json
 
 meterTypeConfigFileName = './config/meter_type.json'
 monitorConfigFileName = './config/monitor_config.json'
-inputFileName = './img_test/qr_test.png'
+inputFileName = './img_test/qr_test2.png'
 g_QrCodeArray = []
 finalResult = ''
 g_MeterTypeObj = []
 g_DeviceConfigObj = []
+g_DeviceInfoArr = []
 
 g_ExpResult = ''
 g_ActResult = ''
@@ -22,6 +24,7 @@ g_fullResult = ''
 class MonitorType(Enum):
     POINTER_METER = 'pointer_meter'
     LIGHT_METER = 'light_meter'
+
 
 
 def find_templateclass_using_name(class_type, class_name):
@@ -52,12 +55,12 @@ def loadConfiguration():
         g_MeterTypeObj = json.loads(dev_json_str)
         print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
     # 设备预警配置
-    with open(monitorConfigFileName, 'r') as file:
-        # 读取文件内容
-        monitor_json_str = file.read()
-        # 解析JSON字符串
-        global g_DeviceConfigObj
-        g_DeviceConfigObj = json.loads(monitor_json_str)
+    # with open(monitorConfigFileName, 'r') as file:
+    #     # 读取文件内容
+    #     monitor_json_str = file.read()
+    #     # 解析JSON字符串
+    #     global g_DeviceConfigObj
+    #     g_DeviceConfigObj = json.loads(monitor_json_str)
 
 def detectQrCode(image):
     print('----detectQrCode---')
@@ -85,13 +88,14 @@ if __name__ == "__main__":
     loadConfiguration()
     image = cv2.imread(inputFileName)
     g_QrCodeArray = detectQrCode(image)
-    print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
+    # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
-    g_ExpResult = getExpResult()
+    # g_ExpResult = getExpResult()
     g_ActResult = getActResult()
     g_fullResult = formatResult()
 
-    ret = sub_ammeter.GetMeterValue('./img_new/img04.png', '')
+    testImage = cv2.imread('./img_new/img04.png')
+    ret = sub_ammeter.GetMeterValue(testImage, '')
 
     print(g_fullResult)
     print('------\n')
