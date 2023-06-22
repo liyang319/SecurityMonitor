@@ -11,7 +11,7 @@ import json
 meterTypeConfigFileName = './config/meter_type.json'
 monitorConfigFileName = './config/monitor_config.json'
 inputFileName = './img_test/qr_test2.png'
-g_QrCodeArray = []
+g_DeviceInfoArray = []
 finalResult = ''
 g_MeterTypeObj = []
 g_DeviceConfigObj = []
@@ -69,13 +69,16 @@ def detectQrCode(image):
 
 
 def getExpResult():
-    retVal = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
+    # retVal = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
+    retVal = ''
     return retVal
 
 
 def getActResult():
     print('----detectQrCode---')
     retVal = ''
+    testImage = cv2.imread('./img_new/img04.png')
+    retVal = sub_ammeter.GetMeterValue(testImage, '')
     return retVal
 
 
@@ -87,17 +90,14 @@ def formatResult():
 if __name__ == "__main__":
     loadConfiguration()
     image = cv2.imread(inputFileName)
-    g_QrCodeArray = detectQrCode(image)
+    g_DeviceInfoArray = detectQrCode(image)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
     # g_ExpResult = getExpResult()
     g_ActResult = getActResult()
     g_fullResult = formatResult()
 
-    testImage = cv2.imread('./img_new/img04.png')
-    ret = sub_ammeter.GetMeterValue(testImage, '')
-
-    print(g_fullResult)
+    print(g_ActResult)
     print('------\n')
 
 
