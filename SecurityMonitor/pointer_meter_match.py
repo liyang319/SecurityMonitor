@@ -215,7 +215,7 @@ def testFun():
         print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
         # result = com_meter_process.GetComMeterValue(destImg[y:y + h, x:x + w], tmpSubMeterImg)
         # print('result = ' + str(result))
-        cv2.imshow('Matched Objects', destImg[y:y + h, x:x + w])
+        cv2.imshow('Matched Objects', originImg[y:y + h, x:x + w])
         cv2.waitKey(0)
 
 
