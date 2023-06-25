@@ -26,8 +26,8 @@ def get_match(template, method, img, width, height):
     # 显示标记了匹配区域的目标图片
     # detectAreas = detectRect(img, width, height)
 
-    # cv2.imshow('Matched Objects', img)
-    # cv2.waitKey(0)
+    cv2.imshow('Matched Objects', img)
+    cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -44,7 +44,7 @@ def get_match(template, method, img, width, height):
 
 def testFun():
     tmpImgName = '../../img_new/sub_ammeter2.png'
-    destImgName = '../../img_new/single_com_meter1.png'
+    destImgName = '../../img625/com_meter1.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
     tmpHeight = templateImg.shape[0]
@@ -52,12 +52,11 @@ def testFun():
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
 
-
+    originImg = destImg.copy()
     # 模版检测--------------------------
     maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
-    cv2.imshow('templateGray', destImg)
-    cv2.waitKey(0)
-
+    # cv2.imshow('templateGray', destImg)
+    # cv2.waitKey(0)
     # 监测指针表盘
     detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
     i = 0
@@ -68,7 +67,7 @@ def testFun():
         print('result = ' + str(result))
 
     # 监测灯状态
-    light_result = template_light.get_2_light_result(destImg)
+    light_result = template_light.get_2_light_result(originImg)
     print('----light_result----' + str(light_result.value))
 
 
@@ -150,7 +149,7 @@ def detectRect(image, width, height):
     # 使用边缘检测算法检测矩形轮廓
     contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # 遍历所有轮廓
-    print('----------\n')
+    # print('----------\n')
     i = 0
     foundAreas = []
     for contour in contours:
@@ -160,9 +159,9 @@ def detectRect(image, width, height):
         # 绘制矩形边界框
         if w >= width and h >= height:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
-            print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-            # cv2.imshow('Result', image)
-            # cv2.waitKey(0)
+            # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+            cv2.imshow('Result', image)
+            cv2.waitKey(0)
             foundAreas.append(contour)
             i += 1
     j = 0
@@ -171,7 +170,7 @@ def detectRect(image, width, height):
     for area in realAreas:
         # 计算轮廓的边界框
         x, y, w, h = cv2.boundingRect(area)
-        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
         # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
         # 识别区域的图片数据
         # cv2.imshow('Result', image[y:y+h, x:x+w])

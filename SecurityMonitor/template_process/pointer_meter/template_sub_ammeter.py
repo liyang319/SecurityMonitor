@@ -55,8 +55,8 @@ def enhance_contrast(image, alpha, beta):
 def getMeterResult(dstImg, width, height, wOffset, hOffset):
     retVal = 0
     enhanced_image = enhance_contrast(dstImg, 0.8, 0)
-    cv2.imshow('enhance', enhanced_image)
-    cv2.waitKey(0)
+    # cv2.imshow('enhance', enhanced_image)
+    # cv2.waitKey(0)
 
     ret, thresh1 = cv2.threshold(enhanced_image, 130, 255, cv2.THRESH_BINARY)
     # 二值化后 分割主要区域 减小干扰 模板图尺寸656*655
@@ -71,8 +71,8 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
     if lines is None:
         print('')
     result = edges.copy()
-    cv2.imshow('result111', result)
-    cv2.waitKey(0)
+    # cv2.imshow('result111', result)
+    # cv2.waitKey(0)
 
     if lines is not None and lines.size != 0:
         for line in lines[0]:
@@ -106,8 +106,8 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
     else:
         print('There is no pointer detected!!!')
     # cv2.imwrite('../../img_test_corrected/test_sum11.png', result)
-    cv2.imshow('result111', result)
-    cv2.waitKey(0)
+    # cv2.imshow('result111', result)
+    # cv2.waitKey(0)
 
     return retVal
 

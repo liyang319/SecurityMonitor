@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
     # 读取输入图片
     # image = cv2.imread("../../img_new/green.png")
-    image = cv2.imread("../../img_new/test_light2.png")
+    image = cv2.imread("../../img_new/single_com_meter1.png")
     # cv2.imshow('templateGray', image)
     # cv2.waitKey(0)
     # 进行灯光检测
