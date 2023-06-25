@@ -4,6 +4,7 @@ from PIL import Image
 # from template_process.utils.utils_qr import qr_decode, qr_encode
 import template_process.utils.utils_qr as qr_utils
 import template_process.pointer_meter.template_sub_ammeter as template_sub_ammeter
+import template_process.light_meter.template_light as template_light
 
 def get_match(template, method, img, width, height):
 
@@ -50,13 +51,14 @@ def testFun():
     tmpWidth = templateImg.shape[1]
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
-    # cv2.imshow('imageGray', destGray)
-    # cv2.imshow('templateGray', templateGray)
-    # cv2.waitKey(0)
+
+
     # 模版检测--------------------------
     maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
     cv2.imshow('templateGray', destImg)
     cv2.waitKey(0)
+
+    # 监测指针表盘
     detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
     i = 0
     for area in detectAreas:
@@ -64,7 +66,11 @@ def testFun():
         print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
         result = template_sub_ammeter.GetMeterValue(destImg[y:y+h, x:x+w], '')
         print('result = ' + str(result))
-    print('--------')
+
+    # 监测灯状态
+    light_result = template_light.get_2_light_result(destImg)
+    print('----light_result----' + str(light_result.value))
+
 
 
 

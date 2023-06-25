@@ -11,31 +11,73 @@ class LIGHT_TYPE(Enum):
     LIGHT_YELLOW = 'LIGHT_YELLOW'
 
 
+# def get_2_light_result(image):
+#     # 将图像转换为HSV颜色空间
+#     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+#     print(str(hsv_image.size))
+#     # cv2.imshow('Matched Objects', hsv_image)
+#     # cv2.waitKey(0)
+#     # 红色的HSV范围         红色灭的色值区间
+#     lower_red = np.array([140, 180, 120])
+#     upper_red = np.array([190, 220, 150])
+#     red_mask = cv2.inRange(hsv_image, lower_red, upper_red)
+#
+#     # 绿色的HSV范围         绿色灭的色值区间
+#     lower_green = np.array([50, 210, 70])
+#     upper_green = np.array([90, 255, 110])
+#     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
+#
+#     # 计算红色和绿色区域的像素数量
+#     red_pixels = cv2.countNonZero(red_mask)
+#     green_pixels = cv2.countNonZero(green_mask)
+#     print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
+#     # 判断哪个灯点亮
+#     if red_pixels > green_pixels:
+#         return LIGHT_TYPE.LIGHT_GREEN
+#     elif green_pixels > red_pixels:
+#         return LIGHT_TYPE.LIGHT_RED
+#     else:
+#         return LIGHT_TYPE.LIGHT_NONE
+
 def get_2_light_result(image):
     # 将图像转换为HSV颜色空间
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     print(str(hsv_image.size))
     # cv2.imshow('Matched Objects', hsv_image)
     # cv2.waitKey(0)
-    # 红色的HSV范围         红色灭的色值区间
-    lower_red = np.array([140, 180, 120])
-    upper_red = np.array([190, 220, 150])
-    red_mask = cv2.inRange(hsv_image, lower_red, upper_red)
 
-    # 绿色的HSV范围         绿色灭的色值区间
-    lower_green = np.array([50, 210, 70])
-    upper_green = np.array([90, 255, 110])
+    # 定义红色的HSV范围
+    lower_red = np.array([0, 50, 50])
+    upper_red = np.array([10, 255, 255])
+    red_mask1 = cv2.inRange(hsv_image, lower_red, upper_red)
+
+    lower_red = np.array([170, 50, 50])
+    upper_red = np.array([180, 255, 255])
+    red_mask2 = cv2.inRange(hsv_image, lower_red, upper_red)
+
+    # 合并两个红色区域的掩码
+    red_mask = red_mask1 + red_mask2
+
+    red_pixels = cv2.countNonZero(red_mask)
+    print('red_pixels=' + str(red_pixels))
+
+    # 定义绿色的HSV范围
+    lower_green = np.array([35, 50, 50])
+    upper_green = np.array([85, 255, 255])
     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
 
-    # 计算红色和绿色区域的像素数量
-    red_pixels = cv2.countNonZero(red_mask)
     green_pixels = cv2.countNonZero(green_mask)
+    print('green_pixels=' + str(green_pixels))
+
+    # 计算红色和绿色区域的像素数量
+    # red_pixels = cv2.countNonZero(red_mask)
+    # green_pixels = cv2.countNonZero(green_mask)
     print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
     # 判断哪个灯点亮
     if red_pixels > green_pixels:
-        return LIGHT_TYPE.LIGHT_GREEN
-    elif green_pixels > red_pixels:
         return LIGHT_TYPE.LIGHT_RED
+    elif green_pixels > red_pixels:
+        return LIGHT_TYPE.LIGHT_GREEN
     else:
         return LIGHT_TYPE.LIGHT_NONE
 
@@ -127,6 +169,33 @@ def checkGreen(image):
     cv2.destroyAllWindows()
 
 
+def checkOnOff(image):
+    # 提取灯的区域
+    # 这里需要根据实际情况调整灯的位置和大小
+    # 可以使用图像处理工具（如Photoshop）查看目标图片并获取灯的位置信息
+    height, width, _ = image.shape
+    # light_roi = image[0:150, 200:250]
+    light_roi = image
+
+    # 将灯的区域转换为灰度图像
+    gray_roi = cv2.cvtColor(light_roi, cv2.COLOR_BGR2GRAY)
+
+    # 对灰度图像进行阈值处理
+    # 这里需要根据实际情况调整阈值的值
+    # 如果灯亮时灰度值较高，可以使用较高的阈值
+    # 如果灯亮时灰度值较低，可以使用较低的阈值
+    _, thresholded_roi = cv2.threshold(gray_roi, 100, 255, cv2.THRESH_BINARY)
+
+    # 统计灯亮的像素数量
+    light_pixel_count = cv2.countNonZero(thresholded_roi)
+
+    # 判断灯是否点亮
+    if light_pixel_count > 0:
+        print('灯亮')
+    else:
+        print('灯灭')
+
+
 def test_light():
     # 读取图片
     image = Image.open('../../template_img/light_meter/template_light2.png')
@@ -171,7 +240,7 @@ def get_match(template, method, img, width, height):
     res = cv2.matchTemplate(img, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     # 设置匹配的阈值，可以根据实际情况调整
-    threshold = 0.93
+    threshold = 0.55
     # 使用np.where找到匹配结果大于阈值的位置
     locations = np.where(res >= threshold)
     # locations = list(zip(*locations[::-1]))
@@ -203,8 +272,8 @@ def get_match(template, method, img, width, height):
 
 
 def testFun():
-    tmpImgName = '../../img_new/red_on.png'
-    destImgName = '../../img_new/single_com_meter1.png'
+    tmpImgName = '../../img_new/green_off.png'
+    destImgName = '../../img_new/single_com_meter.png'
     templateImg = cv2.imread(tmpImgName)
     destImg = cv2.imread(destImgName)
     tmpHeight = templateImg.shape[0]
@@ -213,11 +282,11 @@ def testFun():
     templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
     # ret, thresh1 = cv2.threshold(destGray, 70, 120, cv2.THRESH_BINARY)
     # circles = cv2.HoughCircles(destGray, cv2.HOUGH_GRADIENT, 1, 80, param1=100, param2=20, minRadius=200, maxRadius=0)
-    edges = cv2.Canny(destGray, 110, 255, apertureSize=3)
+    # edges = cv2.Canny(destGray, 110, 255, apertureSize=3)
     # 模版检测--------------------------
-    # maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
-    cv2.imshow('templateGray', edges)
-    cv2.waitKey(0)
+    maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
+    # cv2.imshow('templateGray', edges)
+    # cv2.waitKey(0)
 
 
 
@@ -234,12 +303,14 @@ if __name__ == "__main__":
     # matchedTemplateClass = img_match.CorrectImage(queryImagePath, templateImgDir, outImg)
 
     # 读取输入图片
-    # image = cv2.imread("../../img_new/test_green_on.png")
-    image = cv2.imread("../../img_new/test_red_on.png")
+    # image = cv2.imread("../../img_new/green.png")
+    image = cv2.imread("../../img_new/test_light2.png")
     # cv2.imshow('templateGray', image)
     # cv2.waitKey(0)
     # 进行灯光检测
-    # result = get_2_light_result(image)
+    result = get_2_light_result(image)
     # get_2_light_result(image)
-    # print('------\n' + str(result))
-    checkGreen(image)
+    #  print('------\n' + str(result))
+    # checkOnOff(image)
+    # checkGreen(image)
+    # checkRed(image)
