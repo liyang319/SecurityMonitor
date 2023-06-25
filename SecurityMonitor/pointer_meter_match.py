@@ -110,11 +110,14 @@ def detectRect(inputImage, width, height):
     image = inputImage.copy()
     # 将图片转换为HSV颜色空间
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    # 定义绿色的HSV范围
-    lower_green = (60, 40, 40)
-    upper_green = (70, 255, 255)
+    # 将BGR蓝色转换为HSV颜色空间
+    blue_bgr = np.uint8([[[255, 0, 0]]])
+    blue_hsv = cv2.cvtColor(blue_bgr, cv2.COLOR_BGR2HSV)
+    # 定义蓝色范围
+    lower_blue = np.array([blue_hsv[0][0][0] - 10, 100, 100])
+    upper_blue = np.array([blue_hsv[0][0][0] + 10, 255, 255])
     # 根据HSV范围创建掩膜
-    mask = cv2.inRange(hsv, lower_green, upper_green)
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
     # 在原始图像上应用掩膜
     result = cv2.bitwise_and(image, image, mask=mask)
     # 将结果转换为灰度图像
@@ -133,8 +136,8 @@ def detectRect(inputImage, width, height):
         if w >= width and h >= height:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-            cv2.imshow('Result', image)
-            cv2.waitKey(0)
+            # cv2.imshow('Result', image)
+            # cv2.waitKey(0)
             foundAreas.append(contour)
             i += 1
     j = 0
@@ -167,14 +170,14 @@ def get_match(template, method, img, width, height):
     for (x, y) in zip(*locations[::-1]):
         # 在目标图片上绘制矩形框标记匹配区域
         print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
-        cv2.rectangle(img, (x, y), (x + width, y + height), (0, 255, 0), 2)
+        cv2.rectangle(img, (x, y), (x + width, y + height), (255, 0, 0), 2)
         i += 1
 
     # 显示标记了匹配区域的目标图片
     # detectAreas = detectRect(img, width, height)
 
-    cv2.imshow('Matched Objects', img)
-    cv2.waitKey(0)
+    # cv2.imshow('Matched Objects', img)
+    # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
