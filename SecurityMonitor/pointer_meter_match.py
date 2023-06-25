@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import os
+import template_process.com_meter.template_multi as com_meter_process
 
 
 def CorrectImage(queryImagePath, templateImgDir, outImg, val_num=100, threshold=90):
@@ -105,7 +106,8 @@ def CorrectImage(queryImagePath, templateImgDir, outImg, val_num=100, threshold=
     return result_tamplate_class
 
 
-def detectRect(image, width, height):
+def detectRect(inputImage, width, height):
+    image = inputImage.copy()
     # 将图片转换为HSV颜色空间
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     # 定义绿色的HSV范围
@@ -197,9 +199,22 @@ def testFun():
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
     templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
     originImg = destImg.copy()
+    tmpSubMeterName = './img_new/sub_ammeter2.png'
+    tmpSubMeterImg = cv2.imread(tmpSubMeterName)
+
     maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
 
     detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
+
+    i = 0
+    for area in detectAreas:
+        x, y, w, h = cv2.boundingRect(area)
+        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        # result = com_meter_process.GetComMeterValue(destImg[y:y + h, x:x + w], tmpSubMeterImg)
+        # print('result = ' + str(result))
+        cv2.imshow('Matched Objects', destImg[y:y + h, x:x + w])
+        cv2.waitKey(0)
+
 
 if __name__ == "__main__":
     queryImagePath = "./img_test/test1.png"  # the image to be corrected

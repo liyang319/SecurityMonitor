@@ -42,6 +42,32 @@ def get_match(template, method, img, width, height):
     return max_val, top_left, bottom_right
 
 
+def GetComMeterValue(destImg, templateImg):
+    tmpHeight = templateImg.shape[0]
+    tmpWidth = templateImg.shape[1]
+    destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
+    templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
+
+    originImg = destImg.copy()
+    # 模版检测--------------------------
+    maxval, t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
+    # cv2.imshow('templateGray', destImg)
+    # cv2.waitKey(0)
+    # 监测指针表盘
+    detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
+    i = 0
+    for area in detectAreas:
+        x, y, w, h = cv2.boundingRect(area)
+        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        result = template_sub_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
+        print('result = ' + str(result))
+
+    # 监测灯状态
+    light_result = template_light.get_2_light_result(originImg)
+    print('----light_result----' + str(light_result.value))
+
+
+
 def testFun():
     tmpImgName = '../../img_new/sub_ammeter2.png'
     destImgName = '../../img625/com_meter1.png'
