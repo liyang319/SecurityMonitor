@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 # from template_process.utils.utils_qr import qr_decode, qr_encode
 import template_process.utils.utils_qr as qr_utils
-import template_process.pointer_meter.template_sub_ammeter as template_sub_ammeter
+import template_process.pointer_meter.template_sum_ammeter as template_sum_ammeter
 import template_process.light_meter.template_light as template_light
 
 def get_match(template, method, img, width, height):
@@ -92,16 +92,17 @@ def testFun():
     cv2.imshow('templateGray', templateImg)
     cv2.waitKey(0)
     maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
-    cv2.imshow('templateGray', destImg)
-    cv2.waitKey(0)
+    # cv2.imshow('templateGray', destImg)
+    # cv2.waitKey(0)
     # 监测指针表盘
     detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
     i = 0
     for area in detectAreas:
         x, y, w, h = cv2.boundingRect(area)
         print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        result = template_sub_ammeter.GetMeterValue(destImg[y:y+h, x:x+w], '')
+        result = template_sum_ammeter.GetMeterValue(destImg[y:y+h, x:x+w], '')
         print('result = ' + str(result))
+        i = i + 1
 
     # 监测灯状态
     light_result = template_light.get_2_light_result(originImg)
@@ -200,8 +201,8 @@ def detectRect(image, width, height):
         if w >= width and h >= height:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-            # cv2.imshow('Result', image)
-            # cv2.waitKey(0)
+            cv2.imshow('Result', image)
+            cv2.waitKey(0)
             foundAreas.append(contour)
             i += 1
     j = 0
