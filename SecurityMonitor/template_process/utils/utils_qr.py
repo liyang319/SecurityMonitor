@@ -32,7 +32,7 @@ def qr_decode(image):
         qr_data = obj.data.decode('utf-8')
 
         # 在图像上显示二维码数据
-        cv2.putText(image, qr_data, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+        # cv2.putText(image, qr_data, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
         # 打印二维码数据
         print("二维码数据:", qr_data)
@@ -44,8 +44,8 @@ def qr_decode(image):
     realQrData = QrDataArr[::-1]
 
     # 显示图像
-    cv2.imshow('image', image)
-    cv2.waitKey(0)
+    # cv2.imshow('image', image)
+    # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
     return realQrData

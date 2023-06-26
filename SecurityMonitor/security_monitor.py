@@ -12,7 +12,7 @@ import meter_match
 meterTypeConfigFileName = './config/meter_type.json'
 monitorConfigFileName = './config/monitor_config.json'
 inputFileName = './img_test/qr_test2.png'
-g_DeviceInfoArray = []
+g_DeviceInfo = ''
 finalResult = ''
 g_MeterTypeObj = []
 g_DeviceConfigObj = []
@@ -66,7 +66,7 @@ def loadConfiguration():
 def detectQrCode(image):
     print('----detectQrCode---')
     qrArr = qr_utils.qr_decode(image)
-    return qrArr
+    return qrArr[0]
 
 
 def getExpResult():
@@ -83,21 +83,30 @@ def getActResult():
     return retVal
 
 
-def formatResult():
-    retVal = ''
-    return retVal
+def formatResult(devInfo):
+    jsonData = {}
+    jsonData['sn'] = devInfo.sn
+    jsonData['meterType'] = devInfo.meterType
+    jsonData['x'] = devInfo.x
+    jsonData['y'] = devInfo.y
+    jsonData['w'] = devInfo.w
+    jsonData['h'] = devInfo.h
+    jsonData['pointerMeter'] = devInfo.pointerMeter
+    jsonData['lightMeter'] = devInfo.lightMeter
+    jsonStr = json.dumps(jsonData)
+    print(jsonStr)
+    return jsonStr
 
 
 if __name__ == "__main__":
     loadConfiguration()
     image = cv2.imread(inputFileName)
-    g_DeviceInfoArray = detectQrCode(image)
-    meter_match.DoRecognization(g_DeviceInfoArray)
+    devRec = detectQrCode(image)
+    # g_DeviceInfo = DeviceInfo(qrRec['sn'])
+    meter_match.DoRecognization(devRec)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
-    # g_ExpResult = getExpResult()
-    g_ActResult = getActResult()
-    g_fullResult = formatResult()
+    g_fullResult = formatResult(devRec)
 
     print(g_ActResult)
     print('------\n')

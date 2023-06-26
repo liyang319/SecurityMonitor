@@ -228,7 +228,7 @@ def testFun():
 
 
 def ProcessComMeter1():
-    retVal = ''
+    retVal = 'NONE'
     tmpImgName = './img625/com_meter1.png'
     destImgName = './img625/multi_com_meter.png'
     templateImg = cv2.imread(tmpImgName)
@@ -247,56 +247,29 @@ def ProcessComMeter1():
 
     i = 0
     for area in detectAreas:
-        print('----------COMMETER------------')
+        # print('----------COMMETER------------')
         x, y, w, h = cv2.boundingRect(area)
         pval, lval = com_meter_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
-        print('----pval=' + str(pval) + '---lval=' + str(lval))
+        # print('----pval=' + str(pval) + '---lval=' + str(lval))
+        return pval, lval
 
-    return retVal
+    return 'NONE', 'NONE'
 
 
 def ProcessComMeter2():
     retVal = ''
     return retVal
 
-def DoRecognization(devInfoArr):
-    retVal = ''
-    tmpImgName = './img625/com_meter1.png'
-    destImgName = './img625/multi_com_meter.png'
-    templateImg = cv2.imread(tmpImgName)
-    destImg = cv2.imread(destImgName)
-    tmpHeight = templateImg.shape[0]
-    tmpWidth = templateImg.shape[1]
-    destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
-    templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
-    originImg = destImg.copy()
-    tmpSubMeterName = './img_new/sub_ammeter2.png'
-    tmpSubMeterImg = cv2.imread(tmpSubMeterName)
-
-    maxval, t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
-    detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
-
-    # i = 0
-    # for area in detectAreas:
-    #     print('----------COMMETER------------')
-    #     x, y, w, h = cv2.boundingRect(area)
-    #     pval, lval = com_meter_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
-    #     print('----pval=' + str(pval) + '---lval=' + str(lval))
-
-    recDevInfoArr = []
-    for devInfo in devInfoArr:
-        mDevInfo = ProcessMeter(devInfo)
-        recDevInfoArr.append(mDevInfo)
-    return recDevInfoArr
-
-
-def ProcessMeter(devInfo):
+def DoRecognization(devInfo):
     retVal = ''
     if devInfo.meterType == 'ComMeter1':
-        retVal = ProcessComMeter1()
+        pval, lval = ProcessComMeter1()
+        devInfo.SetPointerMeterVal(pval)
+        devInfo.SetLightMeterVal(lval)
     else:
         retVal = ProcessComMeter2()
     return retVal
+
 
 
 if __name__ == "__main__":
