@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
 import os
-import template_process.com_meter.template_multi as com_meter_process
+import template_process.com_meter.com_meter1 as com_meter1_process
+import template_process.com_meter.com_meter2 as com_meter2_process
 import template_process.utils.deviceInfo_class as DeviceInfo
 import json
 
@@ -221,7 +222,7 @@ def testFun():
         print('----------COMMETER------------')
         x, y, w, h = cv2.boundingRect(area)
         # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        com_meter_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
+        com_meter1_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
         # print('result = ' + str(result))
         # cv2.imshow('Matched Objects', originImg[y:y + h, x:x + w])
         # cv2.waitKey(0)
@@ -249,9 +250,10 @@ def ProcessComMeter1():
     for area in detectAreas:
         # print('----------COMMETER------------')
         x, y, w, h = cv2.boundingRect(area)
-        pval, lval = com_meter_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
+        pval, lval = com_meter1_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
         # print('----pval=' + str(pval) + '---lval=' + str(lval))
         return pval, lval
+        # 每次检测只关注一组仪表，所以不在识别多余的匹配
 
     return 'NONE', 'NONE'
 
