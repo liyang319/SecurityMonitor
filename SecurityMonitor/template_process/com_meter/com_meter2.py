@@ -88,9 +88,7 @@ def testFun():
 
     originImg = destImg.copy()
     # 模版检测--------------------------
-    cv2.imshow('templateGray', destImg)
-    cv2.imshow('templateGray', templateImg)
-    cv2.waitKey(0)
+    #
     maxval,t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
     # cv2.imshow('templateGray', destImg)
     # cv2.waitKey(0)

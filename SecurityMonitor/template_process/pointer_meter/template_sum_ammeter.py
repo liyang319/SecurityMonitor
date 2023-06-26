@@ -87,7 +87,7 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
                 # 该直线与最后一行的焦点
                 pt2 = (int((rho - result.shape[0] * np.sin(theta)) / np.cos(theta)), result.shape[0])
                 # 绘制一条白线
-                cv2.line(result, pt1, pt2, 255, 1)
+                cv2.line(result, pt1, pt2, 255, 3)
                 # print('theat >180 theta<90')
 
             else:  # 水平直线
@@ -96,7 +96,7 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
                 # 该直线与最后一列的交点
                 pt2 = (result.shape[1], int((rho - result.shape[1] * np.cos(theta)) / np.sin(theta)))
                 # 绘制一条直线
-                cv2.line(result, pt1, pt2, 255, 1)
+                cv2.line(result, pt1, pt2, 255, 3)
                 # print('theat <180 theta > 90')
             # 计算表针读数
             print('-------(' + str(pt1[0]) + ',' + str(pt1[1]) + ')-------' + str(pt2[0]) + ',' + str(pt2[1]) + ')----')
@@ -136,7 +136,7 @@ def GetMeterValue(dstImg, params):
     dstImgGray = cv2.cvtColor(dstImg, cv2.COLOR_BGR2GRAY)
     dstImgHeight = dstImg.shape[0]
     dstImgWidth = dstImg.shape[1]
-    retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 40, 40)
+    retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 80, 80)
     # print('GetMeterValue = ' + str(retVal))
     return retVal
 
