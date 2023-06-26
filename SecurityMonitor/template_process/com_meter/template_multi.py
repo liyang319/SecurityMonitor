@@ -11,38 +11,41 @@ def get_match(template, method, img, width, height):
     res = cv2.matchTemplate(img, template, method)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     # 设置匹配的阈值，可以根据实际情况调整
-    threshold = 0.7
+    threshold = 0.78
     # 使用np.where找到匹配结果大于阈值的位置
     locations = np.where(res >= threshold)
     # locations = list(zip(*locations[::-1]))
     # 循环遍历每个匹配结果的位置
     i = 0
+    preX = -10
+    preY = -10
     for (x, y) in zip(*locations[::-1]):
         # 在目标图片上绘制矩形框标记匹配区域
-        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
-        cv2.rectangle(img, (x, y), (x + width, y + height), (0, 255, 0), 2)
-        i += 1
+        if abs(x - preX) > 10:
+            # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
+            cv2.rectangle(img, (x, y), (x + width, y + height), (255, 0, 0), 1)
+            preX = x
+            preY = y
+            i += 1
 
     # 显示标记了匹配区域的目标图片
     # detectAreas = detectRect(img, width, height)
-
-    cv2.imshow('Matched Objects', img)
-    cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     top_left = max_loc
-    print("----------------------------")
-    print("min_val", min_val)
-    print("max_val", max_val)
-    print("min_loc", min_loc)
-    print("max_loc", max_loc)
-    print("----------------------------")
+    # print("----------------------------")
+    # print("min_val", min_val)
+    # print("max_val", max_val)
+    # print("min_loc", min_loc)
+    # print("max_loc", max_loc)
+    # print("----------------------------")
     bottom_right = (top_left[0] + width, top_left[1] + height)
     return max_val, top_left, bottom_right
 
 
 def GetComMeterValue(destImg, templateImg):
+    print('---------GetComMeterValue-------------')
     tmpHeight = templateImg.shape[0]
     tmpWidth = templateImg.shape[1]
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
@@ -58,9 +61,9 @@ def GetComMeterValue(destImg, templateImg):
     i = 0
     for area in detectAreas:
         x, y, w, h = cv2.boundingRect(area)
-        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
         result = template_sub_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
-        print('result = ' + str(result))
+        # print('result = ' + str(result))
 
     # 监测灯状态
     light_result = template_light.get_2_light_result(originImg)
@@ -163,11 +166,14 @@ def testFun():
 def detectRect(image, width, height):
     # 将图片转换为HSV颜色空间
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    # 定义绿色的HSV范围
-    lower_green = (60, 40, 40)
-    upper_green = (70, 255, 255)
+    # 将BGR蓝色转换为HSV颜色空间
+    blue_bgr = np.uint8([[[255, 0, 0]]])
+    blue_hsv = cv2.cvtColor(blue_bgr, cv2.COLOR_BGR2HSV)
+    # 定义蓝色范围
+    lower_blue = np.array([blue_hsv[0][0][0] - 10, 100, 100])
+    upper_blue = np.array([blue_hsv[0][0][0] + 10, 255, 255])
     # 根据HSV范围创建掩膜
-    mask = cv2.inRange(hsv, lower_green, upper_green)
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
     # 在原始图像上应用掩膜
     result = cv2.bitwise_and(image, image, mask=mask)
     # 将结果转换为灰度图像
@@ -186,8 +192,8 @@ def detectRect(image, width, height):
         if w >= width and h >= height:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-            cv2.imshow('Result', image)
-            cv2.waitKey(0)
+            # cv2.imshow('Result', image)
+            # cv2.waitKey(0)
             foundAreas.append(contour)
             i += 1
     j = 0

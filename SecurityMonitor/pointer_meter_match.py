@@ -167,11 +167,16 @@ def get_match(template, method, img, width, height):
     # locations = list(zip(*locations[::-1]))
     # 循环遍历每个匹配结果的位置
     i = 0
+    preX = -10
+    preY = -10
     for (x, y) in zip(*locations[::-1]):
         # 在目标图片上绘制矩形框标记匹配区域
-        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
-        cv2.rectangle(img, (x, y), (x + width, y + height), (255, 0, 0), 2)
-        i += 1
+        if abs(x - preX) > 10:
+        # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
+            cv2.rectangle(img, (x, y), (x + width, y + height), (255, 0, 0), 2)
+            i += 1
+            preX = x
+            preY = y
 
     # 显示标记了匹配区域的目标图片
     # detectAreas = detectRect(img, width, height)
@@ -182,12 +187,12 @@ def get_match(template, method, img, width, height):
 
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
     top_left = max_loc
-    print("----------------------------")
-    print("min_val", min_val)
-    print("max_val", max_val)
-    print("min_loc", min_loc)
-    print("max_loc", max_loc)
-    print("----------------------------")
+    # print("----------------------------")
+    # print("min_val", min_val)
+    # print("max_val", max_val)
+    # print("min_loc", min_loc)
+    # print("max_loc", max_loc)
+    # print("----------------------------")
     bottom_right = (top_left[0] + width, top_left[1] + height)
     return max_val, top_left, bottom_right
 
@@ -211,12 +216,13 @@ def testFun():
 
     i = 0
     for area in detectAreas:
+        print('----------COMMETER------------')
         x, y, w, h = cv2.boundingRect(area)
-        print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        # result = com_meter_process.GetComMeterValue(destImg[y:y + h, x:x + w], tmpSubMeterImg)
+        # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
+        com_meter_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
         # print('result = ' + str(result))
-        cv2.imshow('Matched Objects', originImg[y:y + h, x:x + w])
-        cv2.waitKey(0)
+        # cv2.imshow('Matched Objects', originImg[y:y + h, x:x + w])
+        # cv2.waitKey(0)
 
 
 if __name__ == "__main__":
