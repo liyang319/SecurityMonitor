@@ -58,17 +58,22 @@ def GetComMeterValue(destImg, templateImg):
     # cv2.waitKey(0)
     # 监测指针表盘
     detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
+    pmeter_result = ''
     i = 0
     for area in detectAreas:
         x, y, w, h = cv2.boundingRect(area)
         # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        result = template_sub_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
+        mVal = template_sub_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
+        pmeter_result += str(mVal)
+        if i < 2:
+            pmeter_result += '_'
+        i += 1
         # print('result = ' + str(result))
 
     # 监测灯状态
     light_result = template_light.get_2_light_result(originImg)
-    print('----light_result----' + str(light_result.value))
-
+    print('----light_result----' + str(light_result))
+    return pmeter_result, light_result
 
 
 def testFun():
@@ -97,7 +102,7 @@ def testFun():
 
     # 监测灯状态
     light_result = template_light.get_2_light_result(originImg)
-    print('----light_result----' + str(light_result.value))
+    print('----light_result----' + str(light_result))
 
 
 

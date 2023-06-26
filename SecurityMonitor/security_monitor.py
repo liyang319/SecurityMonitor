@@ -1,5 +1,5 @@
 import argparse
-import pointer_meter_match
+import meter_match
 import importlib
 from enum import Enum
 import cv2
@@ -7,6 +7,7 @@ import template_process.utils.utils_qr as qr_utils
 import template_process.utils.deviceInfo_class as DeviceInfo
 import template_process.pointer_meter.template_sub_ammeter as sub_ammeter
 import json
+import meter_match
 
 meterTypeConfigFileName = './config/meter_type.json'
 monitorConfigFileName = './config/monitor_config.json'
@@ -91,6 +92,7 @@ if __name__ == "__main__":
     loadConfiguration()
     image = cv2.imread(inputFileName)
     g_DeviceInfoArray = detectQrCode(image)
+    meter_match.DoRecognization(g_DeviceInfoArray)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
     # g_ExpResult = getExpResult()

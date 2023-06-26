@@ -6,3 +6,10 @@ class DeviceInfo:
         self.y = y
         self.w = w
         self.h = h
+
+    def SetPointerMeterVal(self, val):
+        self.pointerMeter = val
+
+
+    def SetLightMeterVal(self, val):
+        self.lightMeter = val

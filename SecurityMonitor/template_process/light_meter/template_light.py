@@ -42,7 +42,7 @@ class LIGHT_TYPE(Enum):
 def get_2_light_result(image):
     # 将图像转换为HSV颜色空间
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    print(str(hsv_image.size))
+    # print(str(hsv_image.size))
     # cv2.imshow('Matched Objects', hsv_image)
     # cv2.waitKey(0)
 
@@ -75,9 +75,11 @@ def get_2_light_result(image):
     print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
     # 判断哪个灯点亮
     if red_pixels > green_pixels:
-        return LIGHT_TYPE.LIGHT_RED
+        # return LIGHT_TYPE.LIGHT_RED
+        return 'NONE_ON_OFF'
     elif green_pixels > red_pixels:
-        return LIGHT_TYPE.LIGHT_GREEN
+        # return LIGHT_TYPE.LIGHT_GREEN
+        return 'NONE_OFF_ON'
     else:
         return LIGHT_TYPE.LIGHT_NONE
 

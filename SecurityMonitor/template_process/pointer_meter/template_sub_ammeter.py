@@ -109,7 +109,7 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
     # cv2.imshow('result111', result)
     # cv2.waitKey(0)
 
-    return retVal
+    return round(retVal, 2)
 
 
 def get_angle(x1, y1, x2, y2):
@@ -136,7 +136,7 @@ def GetMeterValue(dstImg, params):
     dstImgHeight = dstImg.shape[0]
     dstImgWidth = dstImg.shape[1]
     retVal = getMeterResult(dstImgGray, dstImgWidth, dstImgHeight, 40, 40)
-    print('GetMeterValue = ' + str(retVal))
+    # print('GetMeterValue = ' + str(retVal))
     return retVal
 
 
