@@ -11,33 +11,94 @@ class LIGHT_TYPE(Enum):
     LIGHT_YELLOW = 'LIGHT_YELLOW'
 
 
-# def get_2_light_result(image):
-#     # 将图像转换为HSV颜色空间
-#     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-#     print(str(hsv_image.size))
-#     # cv2.imshow('Matched Objects', hsv_image)
-#     # cv2.waitKey(0)
-#     # 红色的HSV范围         红色灭的色值区间
-#     lower_red = np.array([140, 180, 120])
-#     upper_red = np.array([190, 220, 150])
-#     red_mask = cv2.inRange(hsv_image, lower_red, upper_red)
-#
-#     # 绿色的HSV范围         绿色灭的色值区间
-#     lower_green = np.array([50, 210, 70])
-#     upper_green = np.array([90, 255, 110])
-#     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
-#
-#     # 计算红色和绿色区域的像素数量
-#     red_pixels = cv2.countNonZero(red_mask)
-#     green_pixels = cv2.countNonZero(green_mask)
-#     print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
-#     # 判断哪个灯点亮
-#     if red_pixels > green_pixels:
-#         return LIGHT_TYPE.LIGHT_GREEN
-#     elif green_pixels > red_pixels:
-#         return LIGHT_TYPE.LIGHT_RED
-#     else:
-#         return LIGHT_TYPE.LIGHT_NONE
+def is_yellow_light_on(image_path):
+    # 加载图像
+    image = cv2.imread(image_path)
+
+    # 将图像转换为HSV颜色空间
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # 定义黄色范围
+    lower_yellow = (20, 100, 100)
+    upper_yellow = (30, 255, 255)
+
+    # 根据黄色范围创建掩膜
+    yellow_mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
+
+    # 计算掩膜中的非零像素数
+    yellow_pixels = cv2.countNonZero(yellow_mask)
+
+    # 如果黄色像素数大于阈值，则判断黄灯点亮
+    threshold = 1000
+    if yellow_pixels > threshold:
+        return 'YELLOW_ON'
+    else:
+        return 'YELLOW_OFF'
+
+
+def get_3_light_result(image):
+    light_status = ''
+    # 将图像转换为HSV颜色空间
+    hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    # print(str(hsv_image.size))
+    # cv2.imshow('Matched Objects', hsv_image)
+    # cv2.waitKey(0)
+
+    # 定义红色的HSV范围
+    lower_red = np.array([0, 50, 50])
+    upper_red = np.array([10, 255, 255])
+    red_mask1 = cv2.inRange(hsv_image, lower_red, upper_red)
+
+    lower_red = np.array([170, 50, 50])
+    upper_red = np.array([180, 255, 255])
+    red_mask2 = cv2.inRange(hsv_image, lower_red, upper_red)
+
+    # 合并两个红色区域的掩码
+    red_mask = red_mask1 + red_mask2
+
+    red_pixels = cv2.countNonZero(red_mask)
+    print('red_pixels=' + str(red_pixels))
+
+    # 定义绿色的HSV范围
+    lower_green = np.array([35, 50, 50])
+    upper_green = np.array([85, 255, 255])
+    green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
+
+    green_pixels = cv2.countNonZero(green_mask)
+    print('green_pixels=' + str(green_pixels))
+
+    # 定义黄色范围
+    lower_yellow = (20, 100, 100)
+    upper_yellow = (30, 255, 255)
+
+    # 根据黄色范围创建掩膜
+    yellow_mask = cv2.inRange(hsv_image, lower_yellow, upper_yellow)
+
+    # 计算掩膜中的非零像素数
+    yellow_pixels = cv2.countNonZero(yellow_mask)
+
+    # 如果黄色像素数大于阈值，则判断黄灯点亮
+    yellow_threshold = 1000
+    if yellow_pixels > yellow_threshold:
+        light_status = 'ON_'
+    else:
+        light_status = 'OFF_'
+
+    # 计算红色和绿色区域的像素数量
+    # red_pixels = cv2.countNonZero(red_mask)
+    # green_pixels = cv2.countNonZero(green_mask)
+    print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
+    # 判断哪个灯点亮
+    if red_pixels > green_pixels:
+        # return LIGHT_TYPE.LIGHT_RED
+        light_status += 'OFF_ON'
+    elif green_pixels > red_pixels:
+        # return LIGHT_TYPE.LIGHT_GREEN
+        light_status += 'ON_OFF'
+    else:
+        light_status += 'NONE_NONE'
+
+    return light_status
 
 def get_2_light_result(image):
     # 将图像转换为HSV颜色空间
@@ -76,10 +137,10 @@ def get_2_light_result(image):
     # 判断哪个灯点亮
     if red_pixels > green_pixels:
         # return LIGHT_TYPE.LIGHT_RED
-        return 'NONE_ON_OFF'
+        return 'NONE_OFF_ON'
     elif green_pixels > red_pixels:
         # return LIGHT_TYPE.LIGHT_GREEN
-        return 'NONE_OFF_ON'
+        return 'NONE_ON_OFF'
     else:
         return LIGHT_TYPE.LIGHT_NONE
 
@@ -296,6 +357,10 @@ def testFun():
 if __name__ == "__main__":
     # corrected_img_path = "../img_test_corrected/test1.png"
     # degree = degree2num(corrected_img_path)
+    # ttt = is_yellow_light_on('../../img625/test_com_meter2.png')
+    image = cv2.imread("../../img625/test_com_meter2.png")
+    ttt = get_3_light_result(image)
+    print(ttt)
     # print(degree)
     # preProcessImg()
     # testFun()
@@ -310,7 +375,7 @@ if __name__ == "__main__":
     # cv2.imshow('templateGray', image)
     # cv2.waitKey(0)
     # 进行灯光检测
-    result = get_2_light_result(image)
+    # result = get_2_light_result(image)
     # get_2_light_result(image)
     #  print('------\n' + str(result))
     # checkOnOff(image)
