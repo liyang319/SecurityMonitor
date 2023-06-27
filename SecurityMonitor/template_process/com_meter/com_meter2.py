@@ -63,7 +63,7 @@ def GetComMeterValue(destImg, templateImg):
     for area in detectAreas:
         x, y, w, h = cv2.boundingRect(area)
         # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-        mVal = template_sub_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
+        mVal = template_sum_ammeter.GetMeterValue(destImg[y:y + h, x:x + w], '')
         pmeter_result += str(mVal)
         if i < 2:
             pmeter_result += '_'
@@ -71,7 +71,7 @@ def GetComMeterValue(destImg, templateImg):
         # print('result = ' + str(result))
 
     # 监测灯状态
-    light_result = template_light.get_2_light_result(originImg)
+    light_result = template_light.get_3_light_result(originImg)
     print('----light_result----' + str(light_result))
     return pmeter_result, light_result
 
@@ -103,7 +103,7 @@ def testFun():
         i = i + 1
 
     # 监测灯状态
-    light_result = template_light.get_2_light_result(originImg)
+    light_result = template_light.get_3_light_result(originImg)
     print('----light_result----' + str(light_result))
 
 

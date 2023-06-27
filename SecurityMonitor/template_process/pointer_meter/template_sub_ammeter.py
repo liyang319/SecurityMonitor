@@ -101,7 +101,7 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
             # 计算表针读数
             angle = get_angle(pt1[0], pt1[1], pt2[0], pt2[1])
             print('angle === ' + str(angle))
-            retVal = caculateMeterVal(angle, 0, 2.0)
+            retVal = caculateMeterVal(angle, 0, 600)
             print(str(retVal))
     else:
         print('There is no pointer detected!!!')

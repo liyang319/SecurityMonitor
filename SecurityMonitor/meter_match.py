@@ -229,6 +229,7 @@ def testFun():
 
 
 def ProcessComMeter1():
+    # commeter1先按模板匹配，取第一个
     retVal = 'NONE'
     tmpImgName = './img625/com_meter1.png'
     destImgName = './img625/multi_com_meter.png'
@@ -259,17 +260,33 @@ def ProcessComMeter1():
 
 
 def ProcessComMeter2():
+    # commeter2没有做模板匹配
     retVal = ''
-    return retVal
+    tmpImgName = './img625/com_meter1.png'
+    destImgName = './img625/test_com_meter2.png'
+    templateImg = cv2.imread(tmpImgName)
+    destImg = cv2.imread(destImgName)
+    tmpHeight = templateImg.shape[0]
+    tmpWidth = templateImg.shape[1]
+    destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
+    templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
+    originImg = destImg.copy()
+    tmpSubMeterName = './img625/sum_ammeter_temp.png'
+    tmpSubMeterImg = cv2.imread(tmpSubMeterName)
+
+    pval, lval = com_meter2_process.GetComMeterValue(originImg, tmpSubMeterImg)
+    return pval, lval
 
 def DoRecognization(devInfo):
     retVal = ''
-    if devInfo.meterType == 'ComMeter1':
+    if devInfo.meterType == 'ComMeter2':
         pval, lval = ProcessComMeter1()
         devInfo.SetPointerMeterVal(pval)
         devInfo.SetLightMeterVal(lval)
     else:
-        retVal = ProcessComMeter2()
+        pval, lval = ProcessComMeter2()
+        devInfo.SetPointerMeterVal(pval)
+        devInfo.SetLightMeterVal(lval)
     return retVal
 
 
@@ -280,6 +297,6 @@ if __name__ == "__main__":
     outImg = "./img_test_corrected/"
 
     # testFun()
-    ProcessComMeter1()
+    ProcessComMeter2()
     # find the corresponding template and correct the img
     # matchedTemplateClass = CorrectImage(queryImagePath, templateImgDir, outImg)
