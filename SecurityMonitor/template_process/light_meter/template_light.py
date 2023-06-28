@@ -57,7 +57,7 @@ def get_3_light_result(image):
     red_mask = red_mask1 + red_mask2
 
     red_pixels = cv2.countNonZero(red_mask)
-    print('red_pixels=' + str(red_pixels))
+    # print('red_pixels=' + str(red_pixels))
 
     # 定义绿色的HSV范围
     lower_green = np.array([35, 50, 50])
@@ -65,7 +65,7 @@ def get_3_light_result(image):
     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
 
     green_pixels = cv2.countNonZero(green_mask)
-    print('green_pixels=' + str(green_pixels))
+    # print('green_pixels=' + str(green_pixels))
 
     # 定义黄色范围
     lower_yellow = (20, 100, 100)
@@ -78,7 +78,7 @@ def get_3_light_result(image):
     yellow_pixels = cv2.countNonZero(yellow_mask)
 
     # 如果黄色像素数大于阈值，则判断黄灯点亮
-    yellow_threshold = 1000
+    yellow_threshold = 2000
     if yellow_pixels > yellow_threshold:
         light_status = 'ON_'
     else:
@@ -87,7 +87,7 @@ def get_3_light_result(image):
     # 计算红色和绿色区域的像素数量
     # red_pixels = cv2.countNonZero(red_mask)
     # green_pixels = cv2.countNonZero(green_mask)
-    print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
+    # print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
     # 判断哪个灯点亮
     if red_pixels > green_pixels:
         # return LIGHT_TYPE.LIGHT_RED
@@ -120,7 +120,7 @@ def get_2_light_result(image):
     red_mask = red_mask1 + red_mask2
 
     red_pixels = cv2.countNonZero(red_mask)
-    print('red_pixels=' + str(red_pixels))
+    # print('red_pixels=' + str(red_pixels))
 
     # 定义绿色的HSV范围
     lower_green = np.array([35, 50, 50])
@@ -128,12 +128,12 @@ def get_2_light_result(image):
     green_mask = cv2.inRange(hsv_image, lower_green, upper_green)
 
     green_pixels = cv2.countNonZero(green_mask)
-    print('green_pixels=' + str(green_pixels))
+    # print('green_pixels=' + str(green_pixels))
 
     # 计算红色和绿色区域的像素数量
     # red_pixels = cv2.countNonZero(red_mask)
     # green_pixels = cv2.countNonZero(green_mask)
-    print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
+    # print('red=' + str(red_pixels) + ' green=' + str(green_pixels))
     # 判断哪个灯点亮
     if red_pixels > green_pixels:
         # return LIGHT_TYPE.LIGHT_RED

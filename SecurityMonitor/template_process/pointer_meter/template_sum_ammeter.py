@@ -78,7 +78,7 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
         for line in lines[0]:
             rho = line[0]  # 第一个元素是距离rho
             theta = line[1]  # 第二个元素是角度theta
-            print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
+            # print('distance:' + str(rho), 'theta:' + str(((theta / np.pi) * 180)))
             lbael_text = 'distance:' + str(round(rho)) + 'theta:' + str(round((theta / np.pi) * 180 - 90, 2))
             # cv2.putText(dstImg, lbael_text, (t_left[0], t_left[1] - 12), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
             if (theta > 3 * (np.pi / 3)) or (theta < (np.pi / 2)):  # 垂直直线
@@ -99,16 +99,17 @@ def getMeterResult(dstImg, width, height, wOffset, hOffset):
                 cv2.line(result, pt1, pt2, 255, 3)
                 # print('theat <180 theta > 90')
             # 计算表针读数
-            print('-------(' + str(pt1[0]) + ',' + str(pt1[1]) + ')-------' + str(pt2[0]) + ',' + str(pt2[1]) + ')----')
+            # print('-------(' + str(pt1[0]) + ',' + str(pt1[1]) + ')-------' + str(pt2[0]) + ',' + str(pt2[1]) + ')----')
             angle = get_angle(pt1[0], pt1[1], pt2[0], pt2[1])
-            print('angle === ' + str(angle))
+            # print('angle === ' + str(angle))
             retVal = caculateMeterVal(angle, 0, 2.0)
-            print(str(retVal))
+            # print(str(retVal))
     else:
-        print('There is no pointer detected!!!')
+        retVal = 0
+        # print('There is no pointer detected!!!')
     # cv2.imwrite('../../img_test_corrected/test_sum11.png', result)
-    cv2.imshow('result111', result)
-    cv2.waitKey(0)
+    # cv2.imshow('result111', result)
+    # cv2.waitKey(0)
 
     return round(retVal, 2)
 

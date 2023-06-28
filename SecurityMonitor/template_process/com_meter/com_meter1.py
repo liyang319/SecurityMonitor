@@ -6,6 +6,7 @@ import template_process.utils.utils_qr as qr_utils
 import template_process.pointer_meter.template_sub_ammeter as template_sub_ammeter
 import template_process.light_meter.template_light as template_light
 
+
 def get_match(template, method, img, width, height):
 
     res = cv2.matchTemplate(img, template, method)
@@ -45,7 +46,7 @@ def get_match(template, method, img, width, height):
 
 
 def GetComMeterValue(destImg, templateImg):
-    print('---------GetComMeterValue-------------')
+    # print('---------GetComMeterValue-------------')
     tmpHeight = templateImg.shape[0]
     tmpWidth = templateImg.shape[1]
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
@@ -72,7 +73,7 @@ def GetComMeterValue(destImg, templateImg):
 
     # 监测灯状态
     light_result = template_light.get_2_light_result(originImg)
-    print('----light_result----' + str(light_result))
+    # print('----light_result----' + str(light_result))
     return pmeter_result, light_result
 
 

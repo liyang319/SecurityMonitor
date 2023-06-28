@@ -45,7 +45,7 @@ def get_match(template, method, img, width, height):
 
 
 def GetComMeterValue(destImg, templateImg):
-    print('---------GetComMeterValue-------------')
+    # print('---------GetComMeterValue-------------')
     tmpHeight = templateImg.shape[0]
     tmpWidth = templateImg.shape[1]
     destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
@@ -72,7 +72,7 @@ def GetComMeterValue(destImg, templateImg):
 
     # 监测灯状态
     light_result = template_light.get_3_light_result(originImg)
-    print('----light_result----' + str(light_result))
+    # print('----light_result----' + str(light_result))
     return pmeter_result, light_result
 
 
@@ -199,8 +199,8 @@ def detectRect(image, width, height):
         if w >= width and h >= height:
             cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
             # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + w) + ',' + str(y + h) + ')----')
-            cv2.imshow('Result', image)
-            cv2.waitKey(0)
+            # cv2.imshow('Result', image)
+            # cv2.waitKey(0)
             foundAreas.append(contour)
             i += 1
     j = 0

@@ -47,7 +47,7 @@ def find_templateclass_using_name(class_type, class_name):
 
 
 def loadConfiguration():
-    print('----loadConfiguration---')
+    # print('----loadConfiguration---')
     # 仪表类型配置
     with open(meterTypeConfigFileName, 'r') as file:
         # 读取文件内容
@@ -65,7 +65,7 @@ def loadConfiguration():
     #     g_DeviceConfigObj = json.loads(monitor_json_str)
 
 def detectQrCode(image):
-    print('----detectQrCode---')
+    # print('----detectQrCode---')
     qrArr = qr_utils.qr_decode(image)
     return qrArr[0]
 
@@ -77,7 +77,7 @@ def getExpResult():
 
 
 def getActResult():
-    print('----detectQrCode---')
+    # print('----detectQrCode---')
     retVal = ''
     testImage = cv2.imread('./img_new/img04.png')
     retVal = sub_ammeter.GetMeterValue(testImage, '')
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     if len(arguments) == 2:
         inputFileName = arguments[1]
     else:
-        print('invalid input')
+        print('exception')
         sys.exit(3)
 
     loadConfiguration()
@@ -116,7 +116,6 @@ if __name__ == "__main__":
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
     g_fullResult = formatResult(devRec)
-
     print(g_ActResult)
 
 
