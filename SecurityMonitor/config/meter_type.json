@@ -8,24 +8,24 @@
         "unit": "A",
         "numPointerMeter": "1"
     },
-    "ComMeter_1": {
+    "ComMeter1": {
         "deviceType": "pointer_light",
         "minVal": "0",
         "maxVal": "100",
         "minSlope": "0",
         "maxSlope": "180",
         "unit": "A",
-        "numPointerMeter": "1",
+        "numPointerMeter": "3",
         "lightType": "2"
     },
-    "ComMeter_2": {
+    "ComMeter2": {
         "deviceType": "pointer_light",
         "minVal": "0",
         "maxVal": "100",
         "minSlope": "0",
         "maxSlope": "180",
         "unit": "A",
-        "numPointerMeter": "1",
+        "numPointerMeter": "3",
         "lightType": "3"
     }
 }

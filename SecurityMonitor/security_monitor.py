@@ -8,10 +8,11 @@ import template_process.utils.deviceInfo_class as DeviceInfo
 import template_process.pointer_meter.template_sub_ammeter as sub_ammeter
 import json
 import meter_match
+import sys
 
 meterTypeConfigFileName = './config/meter_type.json'
 monitorConfigFileName = './config/monitor_config.json'
-inputFileName = './img_test/qr_test2.png'
+# inputFileName = './img_test/qr_test2.png'
 g_DeviceInfo = ''
 finalResult = ''
 g_MeterTypeObj = []
@@ -54,7 +55,7 @@ def loadConfiguration():
         # 解析JSON字符串 声明全局变量
         global g_MeterTypeObj
         g_MeterTypeObj = json.loads(dev_json_str)
-        print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
+        # print(g_MeterTypeObj['PointerMeter_1']['deviceType'])
     # 设备预警配置
     # with open(monitorConfigFileName, 'r') as file:
     #     # 读取文件内容
@@ -99,17 +100,24 @@ def formatResult(devInfo):
 
 
 if __name__ == "__main__":
+    # 获取命令行参数
+    arguments = sys.argv
+    aa = len(arguments)
+    if len(arguments) == 2:
+        inputFileName = arguments[1]
+    else:
+        print('invalid input')
+        sys.exit(3)
+
     loadConfiguration()
-    image = cv2.imread(inputFileName)
-    devRec = detectQrCode(image)
-    # g_DeviceInfo = DeviceInfo(qrRec['sn'])
-    meter_match.DoRecognization(devRec)
+    inputImg = cv2.imread(inputFileName)
+    devRec = detectQrCode(inputImg)
+    meter_match.DoRecognization(devRec, inputImg)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
     g_fullResult = formatResult(devRec)
 
     print(g_ActResult)
-    print('------\n')
 
 
 

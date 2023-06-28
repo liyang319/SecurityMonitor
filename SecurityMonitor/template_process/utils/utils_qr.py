@@ -35,7 +35,7 @@ def qr_decode(image):
         # cv2.putText(image, qr_data, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
         # 打印二维码数据
-        print("二维码数据:", qr_data)
+        # print("二维码数据:", qr_data)
 
         qrObj = json.loads(qr_data)
 
