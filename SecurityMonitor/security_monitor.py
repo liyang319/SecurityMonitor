@@ -9,9 +9,10 @@ import template_process.pointer_meter.template_sub_ammeter as sub_ammeter
 import json
 import meter_match
 import sys
-
-meterTypeConfigFileName = './config/meter_type.json'
-monitorConfigFileName = './config/monitor_config.json'
+import os
+g_currentDir = os.path.dirname(os.path.abspath(__file__))
+meterTypeConfigFileName = os.path.join(g_currentDir, './config/meter_type.json')
+# monitorConfigFileName = './config/monitor_config.json'
 # inputFileName = './img_test/qr_test2.png'
 g_DeviceInfo = ''
 finalResult = ''
@@ -117,6 +118,9 @@ if __name__ == "__main__":
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
     g_fullResult = formatResult(devRec)
     print(g_ActResult)
+    # current_dir = os.getcwd()
+    # file_path = os.path.join(current_dir, './template_img/pointer_meter/file.txt')
+    # print(file_path)
 
 
 

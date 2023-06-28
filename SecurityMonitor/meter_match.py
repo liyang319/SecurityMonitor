@@ -7,6 +7,8 @@ import template_process.utils.deviceInfo_class as DeviceInfo
 import json
 
 
+g_currentDir = os.path.dirname(os.path.abspath(__file__))
+
 def CorrectImage(queryImagePath, templateImgDir, outImg, val_num=100, threshold=90):
     """
     Find the template class for the query image and to correct the query image
@@ -233,7 +235,7 @@ def ProcessComMeter1(destImg):
     # destImgName = './img_test/qr_test2.png'
     # destImg = cv2.imread(destImgName)
     # commeter1先按模板匹配，取第一个
-    tmpImgName = './template_img/com_meter/template_commeter1.png'
+    tmpImgName = os.path.join(g_currentDir, './template_img/com_meter/template_commeter1.png')
     templateImg = cv2.imread(tmpImgName)
     tmpHeight = templateImg.shape[0]
     tmpWidth = templateImg.shape[1]
@@ -241,7 +243,7 @@ def ProcessComMeter1(destImg):
     # templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
     originImg = destImg.copy()
     # 子电流表模板
-    tmpSubMeterName = './template_img/pointer_meter/template_sub_ammeter.png'
+    tmpSubMeterName = os.path.join(g_currentDir, './template_img/pointer_meter/template_sub_ammeter.png')
     tmpSubMeterImg = cv2.imread(tmpSubMeterName)
 
     # 匹配commeter1
@@ -273,7 +275,7 @@ def ProcessComMeter2(destImg):
     # templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
     originImg = destImg.copy()
     # commeter2中电流总表模板
-    tmpSubMeterName = './template_img/pointer_meter/template_sum_ammeter.png'
+    tmpSubMeterName = os.path.join(g_currentDir, './template_img/pointer_meter/template_sum_ammeter.png')
     tmpSubMeterImg = cv2.imread(tmpSubMeterName)
     # 直接识别一次读数
     pval, lval = com_meter2_process.GetComMeterValue(originImg, tmpSubMeterImg)
