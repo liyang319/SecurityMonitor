@@ -176,7 +176,7 @@ def get_match(template, method, img, width, height):
     preY = -10
     for (x, y) in zip(*locations[::-1]):
         # 在目标图片上绘制矩形框标记匹配区域
-        if abs(x - preX) > 10:
+        if abs(x - preX) > 20:
         # print(str(i) + '----------(' + str(x) + ',' + str(y) + ')-------(' + str(x + width) + ',' + str(y + height) + ')----')
             cv2.rectangle(img, (x, y), (x + width, y + height), (255, 0, 0), 2)
             i += 1
@@ -267,19 +267,36 @@ def ProcessComMeter2(destImg):
     # destImgName = './img625/test_com_meter2_qr.png'
     # destImg = cv2.imread(destImgName)
     # commeter2没有做模板匹配，默认图片中只有一个commeter2
-    # tmpImgName = './img625/com_meter1.png'
-    # templateImg = cv2.imread(tmpImgName)
-    # tmpHeight = templateImg.shape[0]
-    # tmpWidth = templateImg.shape[1]
+    tmpImgName = os.path.join(g_currentDir, './template_img/com_meter/template_commeter2.png')
+    templateImg = cv2.imread(tmpImgName)
+    tmpHeight = templateImg.shape[0]
+    tmpWidth = templateImg.shape[1]
     # destGray = cv2.cvtColor(destImg, cv2.COLOR_BGR2GRAY)
     # templateGray = cv2.cvtColor(templateImg, cv2.COLOR_BGR2GRAY)
     originImg = destImg.copy()
     # commeter2中电流总表模板
     tmpSubMeterName = os.path.join(g_currentDir, './template_img/pointer_meter/template_sum_ammeter.png')
     tmpSubMeterImg = cv2.imread(tmpSubMeterName)
-    # 直接识别一次读数
-    pval, lval = com_meter2_process.GetComMeterValue(originImg, tmpSubMeterImg)
-    return pval, lval
+
+    # 匹配commeter1
+    maxval, t_left, b_right = get_match(templateImg, cv2.TM_CCOEFF_NORMED, destImg, tmpWidth, tmpHeight)
+    # 多个匹配，去除多余的
+    detectAreas = detectRect(destImg, tmpWidth, tmpHeight)
+
+    # 遍历多个识别的commeter1， 取第一个来识别
+    i = 0
+    for area in detectAreas:
+        # print('----------COMMETER------------')
+        x, y, w, h = cv2.boundingRect(area)
+        pval, lval = com_meter2_process.GetComMeterValue(originImg[y:y + h, x:x + w], tmpSubMeterImg)
+        # print('----pval=' + str(pval) + '---lval=' + str(lval))
+        return pval, lval
+        # 每次检测只关注一组仪表，取得后直接返回
+    return 'NONE', 'NONE'
+
+    # # 直接识别一次读数
+    # pval, lval = com_meter2_process.GetComMeterValue(originImg, tmpSubMeterImg)
+    # return pval, lval
 
 
 def DoRecognization(devInfo, image):
@@ -302,6 +319,7 @@ if __name__ == "__main__":
     outImg = "./img_test_corrected/"
 
     # testFun()
-    # ProcessComMeter2()
+    ttImg = cv2.imread('./img_test/test_com_meter2_qr.png')
+    ProcessComMeter2(ttImg)
     # find the corresponding template and correct the img
     # matchedTemplateClass = CorrectImage(queryImagePath, templateImgDir, outImg)
