@@ -117,10 +117,13 @@ if __name__ == "__main__":
 
     loadConfiguration()
     inputImg = cv2.imread(inputFileName)
+    if(inputImg is None):
+        g_fullResult = formatResult(None, 'FAIL', 'INVALID_IMAGE')
+        sys.exit(3)
     devRec = detectQrCode(inputImg)
     if(devRec is None):
-        g_fullResult = formatResult(devRec, 'FAIL', 'INVALID_QR')
-        sys.exit(3)
+        g_fullResult = formatResult(None, 'FAIL', 'INVALID_QR')
+        sys.exit(4)
     meter_match.DoRecognization(devRec, inputImg)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
