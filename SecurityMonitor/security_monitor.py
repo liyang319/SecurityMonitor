@@ -112,7 +112,7 @@ if __name__ == "__main__":
     if len(arguments) == 2:
         inputFileName = arguments[1]
     else:
-        g_fullResult = formatResult(None, 'FAIL', 'INVALID_PARAM')
+        g_fullResult = formatResult(None, 'FAIL', 'INVALID_PARAMETER')
         sys.exit(2)
 
     loadConfiguration()
