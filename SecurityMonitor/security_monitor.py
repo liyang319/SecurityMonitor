@@ -68,7 +68,9 @@ def loadConfiguration():
 def detectQrCode(image):
     # print('----detectQrCode---')
     qrArr = qr_utils.qr_decode(image)
-    return qrArr[0]
+    if(len(qrArr) > 0):
+        return qrArr[0]
+    return None
 
 
 def getExpResult():
@@ -85,16 +87,19 @@ def getActResult():
     return retVal
 
 
-def formatResult(devInfo):
+def formatResult(devInfo, msg, subMsg):
     jsonData = {}
-    jsonData['sn'] = devInfo.sn
-    jsonData['meterType'] = devInfo.meterType
-    jsonData['x'] = devInfo.x
-    jsonData['y'] = devInfo.y
-    jsonData['w'] = devInfo.w
-    jsonData['h'] = devInfo.h
-    jsonData['pointerMeter'] = devInfo.pointerMeter
-    jsonData['lightMeter'] = devInfo.lightMeter
+    jsonData['msg'] = msg
+    jsonData['subMsg'] = subMsg
+    if(devInfo is not None):
+        jsonData['sn'] = devInfo.sn
+        jsonData['meterType'] = devInfo.meterType
+        # jsonData['x'] = devInfo.x
+        # jsonData['y'] = devInfo.y
+        # jsonData['w'] = devInfo.w
+        # jsonData['h'] = devInfo.h
+        jsonData['pointerMeter'] = devInfo.pointerMeter
+        jsonData['lightMeter'] = devInfo.lightMeter
     jsonStr = json.dumps(jsonData)
     print(jsonStr)
     return jsonStr
@@ -107,17 +112,20 @@ if __name__ == "__main__":
     if len(arguments) == 2:
         inputFileName = arguments[1]
     else:
-        print('exception')
-        sys.exit(3)
+        g_fullResult = formatResult(None, 'FAIL', 'INVALID_PARAM')
+        sys.exit(2)
 
     loadConfiguration()
     inputImg = cv2.imread(inputFileName)
     devRec = detectQrCode(inputImg)
+    if(devRec is None):
+        g_fullResult = formatResult(devRec, 'FAIL', 'INVALID_QR')
+        sys.exit(3)
     meter_match.DoRecognization(devRec, inputImg)
     # print(g_DeviceConfigObj[g_QrCodeArray[0].val]['result'])
     # g_ExpResult = g_DeviceConfigObj[g_QrCodeArray[0].val]['result']
-    g_fullResult = formatResult(devRec)
-    print(g_ActResult)
+    g_fullResult = formatResult(devRec, 'SUCCESS', 'SUCCESS')
+    # print(g_fullResult)
     # current_dir = os.getcwd()
     # file_path = os.path.join(current_dir, './template_img/pointer_meter/file.txt')
     # print(file_path)
